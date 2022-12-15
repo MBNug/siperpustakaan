@@ -1,0 +1,136 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Member;
+use App\Libraries\Fungsi;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Http\Requests\StoreMemberRequest;
+use App\Http\Requests\UpdateMemberRequest;
+use App\Models\Book;
+use App\Models\Borrow;
+
+class MemberController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+        $members = Member::all();
+        $borrows = Borrow::all();
+        return view('member.index', compact('members', 'borrows'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+        return view('member.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\StoreMemberRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+        $request->validate([
+            'nis' => 'required|unique:members|max:255',
+            'nama' => 'required',
+            'alamat' => 'required',
+        ]);
+
+        Member::create($request->all());
+
+        Fungsi::sweetalert('Berhasil menambahkan anggota baru', 'success', 'Berhasil!');
+        return redirect(route('member'));
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Member  $member
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Member $member)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Member  $member
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Member $member)
+    {
+        //
+        return view('member.edit', compact('member'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\UpdateMemberRequest  $request
+     * @param  \App\Models\Member  $member
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Member $member)
+    {
+        //
+        $request->validate([
+            'nis' => ['required', 'max:255', Rule::unique('members')->ignore($member->id)],
+            'nama' => 'required',
+            'alamat' => 'required',
+            'jmlkunjungan' => 'required',
+        ]);
+
+        $member->update($request->all());
+        Fungsi::sweetalert('Data anggota berhasil diupdate', 'success', 'Berhasil!');
+        return redirect(route('member'));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Member  $member
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id){
+        $member = Member::find($id);
+        return view('member.delete', compact('member'));
+
+    }
+    public function destroy($id){
+        // dd($id);
+        $member = Member::find($id);
+        $member->delete();
+        Fungsi::sweetalert('Peminjaman berhasil dihapus', 'success', 'Berhasil!');
+        return redirect()->route('member');
+    }
+
+
+    public function lihatpinjaman($id){
+        
+        $member = Member::find($id);
+        $books = Book::all();
+        $borrows = Borrow::all();
+        $nis = $member->nis;
+        $borrow = $borrows->where('nispeminjam', '=', $nis);
+        // dd($borrow);
+        return view('member.lihatpinjaman', compact('borrow'));
+    }
+}
