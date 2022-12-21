@@ -17,12 +17,12 @@ class HomeController extends Controller
     {
         
 
-        for($i=0; $i<7; $i++){
-            $a = (Pengunjung::where('tanggal', '=', Carbon::today()->startOfWeek()->addDays($i)->toDateString())
+        for($i=0; $i<31; $i++){
+            $a = (Pengunjung::where('tanggal', '=', Carbon::today()->startOfMonth()->addDays($i)->toDateString())
                         ->first());
             $b = $a===null;
             if($b){
-                $a = Pengunjung::create(['tanggal'=>Carbon::today()->startOfWeek()->addDays($i),'jmlpengunjung'=>0, 'jmlpinjam'=>0]);
+                $a = Pengunjung::create(['tanggal'=>Carbon::today()->startOfMonth()->addDays($i),'jmlpengunjung'=>0, 'jmlpinjam'=>0]);
             }
             
         }
@@ -56,10 +56,17 @@ class HomeController extends Controller
         $a->save();
         $member = Member::where('nis', '=', $request->nis)
                         ->first();
-        $member->jmlkunjungan +=1;
-        $member->save();
-        Fungsi::sweetalert('Berhasil absen!', 'success', 'Berhasil!');
-        return redirect()->route('home');
+        if($member===null){
+            Fungsi::sweetalert('NIS Salah!', 'error', 'Gagal!');
+            return redirect()->route('home');
+        }
+        else{
+            $member->jmlkunjungan +=1;
+            $member->save();
+            Fungsi::sweetalert('Berhasil absen!', 'success', 'Berhasil!');
+            return redirect()->route('home');
+        }
+        
         
     }
     

@@ -21,11 +21,11 @@ class AdminController extends Controller
         
         if(Pengunjung::where('tanggal', '=', Carbon::today()->toDateString())->first() === null){
             for($i=0; $i<7; $i++){
-                $a = (Pengunjung::where('tanggal', '=', Carbon::today()->startOfWeek()->addDays($i)->toDateString())
+                $a = (Pengunjung::where('tanggal', '=', Carbon::today()->startOfMonth()->addDays($i)->toDateString())
                             ->first());
                 $b = $a===null;
                 if($b){
-                    $a = Pengunjung::create(['tanggal'=>Carbon::today()->startOfWeek()->addDays($i),'jmlpengunjung'=>0]);
+                    $a = Pengunjung::create(['tanggal'=>Carbon::today()->startOfMonth()->addDays($i),'jmlpengunjung'=>0]);
                 }
             }
         }

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\BorrowExport;
 use Carbon\Carbon;
 use App\Models\Book;
 use App\Models\Borrow;
 use App\Models\Member;
 use App\Libraries\Fungsi;
+use App\Models\Pengunjung;
 use Illuminate\Http\Request;
+use App\Exports\BorrowExport;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\StoreBorrowRequest;
@@ -83,13 +84,19 @@ class BorrowController extends Controller
                 $book =Book::find($borrow->book->id);
                 $book->dipinjam = $book->dipinjam + 1;
                 $book->save();
-            }
+
+                $a = (Pengunjung::where('tanggal', '=', $request->tanggalpinjam)
+                        ->first());
+                $a->jmlpinjam +=1;
+                $a->save();
+                Fungsi::sweetalert('Berhasil menambahkan peminjaman baru', 'success', 'Berhasil!');
+                return redirect(route('borrow'));
+                    }
             
         }
         
 
-        Fungsi::sweetalert('Berhasil menambahkan peminjaman baru', 'success', 'Berhasil!');
-        return redirect(route('borrow'));
+        
     }
 
     /**
@@ -170,9 +177,12 @@ class BorrowController extends Controller
     public function destroy($id){
         // dd($id);
         $borrow = Borrow::find($id);
-        $book = Book::find($borrow->book->id);
-        $book->dipinjam = $book->dipinjam - 1;
-        $book->save();
+        $dikembalikan = $borrow->tanggalkembali;
+        if($dikembalikan === null){
+            $book = Book::find($borrow->book->id);
+            $book->dipinjam = $book->dipinjam - 1;
+            $book->save();
+        }
         $borrow->delete();
         Fungsi::sweetalert('Peminjaman berhasil dihapus', 'success', 'Berhasil!');
         return redirect()->route('borrow');

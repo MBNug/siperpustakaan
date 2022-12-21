@@ -5,7 +5,7 @@
 @section('content')
 <div class="container mt-5 text-center">
     <h2>Presensi</h2>
-    <p>Masukan Nomor Anggota Anda</p>
+    <p>Masukan Nomor Induk Siswa Anda</p>
 </div>
 <div class="container my-5">
     <div class="row justify-content-center">

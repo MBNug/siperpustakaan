@@ -84,7 +84,7 @@
 
             <!-- Logout -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('logout') }}" data-toggle="modal" data-target="#logoutModal">
+                <a class="nav-link" href="{{ route('logout') }}" data-toggle="modal" data-target="#logoutModal" >
                     <i class="fas fa-fw fa-sign-out-alt"></i>
                     <span>Logout</span></a>
             </li>
@@ -180,7 +180,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="{{ route('logout') }}" onclick="book.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                    <a class="btn btn-success" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
                 </div>
             </div>
         </div>
