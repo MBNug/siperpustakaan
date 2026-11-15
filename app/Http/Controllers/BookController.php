@@ -22,7 +22,7 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'kode' => 'required|unique:books|max:255',
             'judul' => 'required',
             'pengarang' => 'required',
@@ -31,17 +31,14 @@ class BookController extends Controller
             'jumlah' => 'required',
         ]);
 
-        Book::create($request->all());
+        Book::create($validated);
 
         Fungsi::sweetalert('Buku berhasil ditambahkan', 'success', 'Berhasil!');
         return redirect(route('book'));
     }
     public function show(Book $book)
     {
-        //
-        $book->delete();
-        Fungsi::sweetalert('Buku berhasil dihapus', 'success', 'Berhasil!');
-        return redirect()->route('book');
+        return redirect()->route('book.edit', $book->id);
     }
 
     public function edit(Book $book)
@@ -51,7 +48,7 @@ class BookController extends Controller
 
     public function update(Request $request, Book $book)
     {
-        $request->validate([
+        $validated = $request->validate([
             'kode' => ['required', 'max:255', Rule::unique('books')->ignore($book->id)],
             'judul' => 'required',
             'pengarang' => 'required',
@@ -61,7 +58,7 @@ class BookController extends Controller
             'dipinjam' => 'required',
         ]);
 
-        $book->update($request->all());
+        $book->update($validated);
         Fungsi::sweetalert('Buku berhasil diupdate', 'success', 'Berhasil!');
         return redirect(route('book'));
     }

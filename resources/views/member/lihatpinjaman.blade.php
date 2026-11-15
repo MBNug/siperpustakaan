@@ -75,8 +75,10 @@
                                             </a>
                                             
                                             @if ($b->tanggalkembali === null)
-                                                <a href="{{ route('borrow.kembalikan',$b->id) }}" class="btn btn-success btn-sm mt-1" data-text="Borrow" title="Kembalikan Buku"><i class="fa fa-calendar-check"></i>     Kembalikan</a>
-                                            
+                                                <form action="{{ route('borrow.kembalikan', $b->id) }}" method="POST" style="display:inline-block;">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-success btn-sm mt-1" data-text="Borrow" title="Kembalikan Buku"><i class="fa fa-calendar-check"></i> Kembalikan</button>
+                                                </form>
                                             @endif
                                             
                                         </td>
