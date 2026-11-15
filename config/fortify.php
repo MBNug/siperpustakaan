@@ -131,7 +131,7 @@ return [
     |
     */
 
-    'features' => [
+    'features' => filter_var(env('DEMO_MODE', false), FILTER_VALIDATE_BOOLEAN) ? [] : [
         // Features::registration(), // Disabled: prevent public visitors from registering admin accounts
         Features::resetPasswords(),
         // Features::emailVerification(),

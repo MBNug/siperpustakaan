@@ -49,6 +49,14 @@
                                         Login
                                     </button>
                                 </form>
+                                @if (config('app.demo_mode') && config('app.demo_login_password'))
+                                    <div class="alert alert-info mt-3 mb-0 small">
+                                        <div class="font-weight-bold mb-1">Akun Demo Admin</div>
+                                        <div>Email: <code>{{ config('app.demo_login_email') }}</code></div>
+                                        <div>Password: <code>{{ config('app.demo_login_password') }}</code></div>
+                                        <div class="text-muted mt-1">Database di-reset otomatis setiap hari pukul 03:00 WIB.</div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

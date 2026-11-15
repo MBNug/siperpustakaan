@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{HomeController, BookController, AdminController, MemberController, BorrowController};
+use App\Http\Controllers\{HomeController, BookController, AdminController, MemberController, BorrowController, DemoResetController};
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 /*
@@ -18,6 +18,7 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 Route::get('redirect', [HomeController::class, 'redirect']);
 Route::get('', [HomeController::class, 'index'])->name('home');
 Route::post('/absen', [HomeController::class, 'hadir'])->name('home.hadir');
+Route::post('/_internal/demo-reset', [DemoResetController::class, 'reset'])->name('internal.demo-reset');
 
 
 // Route::get('/event/registration', [EventRegistrationController::class, 'index'])->name('event.registration.index');
