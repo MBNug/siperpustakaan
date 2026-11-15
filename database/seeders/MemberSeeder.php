@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Member;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class MemberSeeder extends Seeder
 {
@@ -17,36 +16,57 @@ class MemberSeeder extends Seeder
     {
         $records = [
             [
-                'id' => 1,
                 'nis' => 'DKP001',
-                'nama' => 'Jeje',
-                'alamat' => 'Jl. Lumba lumba, Pulosari Pemalang',
+                'nama' => 'Bagas Nugroho',
+                'alamat' => 'Jl. Prof. Soedarto No. 12, Tembalang, Semarang',
                 'jmlkunjungan' => 24,
             ],
             [
-                'id' => 2,
                 'nis' => 'DKP002',
-                'nama' => 'Ryan M Tallulah',
-                'alamat' => 'Jl. Lumba lumba, Pulosari Pemalang',
+                'nama' => 'Siti Nurhaliza',
+                'alamat' => 'Jl. Banjarsari Selatan No. 8, Semarang',
                 'jmlkunjungan' => 21,
             ],
             [
-                'id' => 3,
                 'nis' => 'DKP003',
-                'nama' => 'Shaun',
-                'alamat' => 'Jl. Lumba lumba, Pulosari Pemalang',
-                'jmlkunjungan' => 2,
+                'nama' => 'Dimas Pratama',
+                'alamat' => 'Jl. Sirojudin No. 45, Tembalang, Semarang',
+                'jmlkunjungan' => 15,
             ],
             [
-                'id' => 4,
                 'nis' => 'DKP004',
-                'nama' => 'Bill Gates',
-                'alamat' => 'Jl. Lumba lumba, Pulosari Pemalang',
+                'nama' => 'Aulia Rahmawati',
+                'alamat' => 'Jl. Gondang Timur II No. 3, Semarang',
+                'jmlkunjungan' => 12,
+            ],
+            [
+                'nis' => 'DKP005',
+                'nama' => 'Fajar Setiawan',
+                'alamat' => 'Jl. Mulawarman Raya No. 19, Banyumanik, Semarang',
+                'jmlkunjungan' => 9,
+            ],
+            [
+                'nis' => 'DKP006',
+                'nama' => 'Nabila Putri',
+                'alamat' => 'Jl. Durian Raya No. 27, Banyumanik, Semarang',
+                'jmlkunjungan' => 18,
+            ],
+            [
+                'nis' => 'DKP007',
+                'nama' => 'Rizky Ramadhan',
+                'alamat' => 'Jl. Tirto Agung No. 5, Tembalang, Semarang',
+                'jmlkunjungan' => 7,
+            ],
+            [
+                'nis' => 'DKP008',
+                'nama' => 'Citra Maharani',
+                'alamat' => 'Jl. Bukit Sari No. 14, Banyumanik, Semarang',
+                'jmlkunjungan' => 11,
             ],
         ];
+
         foreach ($records as $record) {
-            $member = new Member();
-            $member->firstOrCreate($record);
+            Member::firstOrCreate(['nis' => $record['nis']], $record);
         }
     }
 }

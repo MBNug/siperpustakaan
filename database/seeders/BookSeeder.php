@@ -16,128 +16,117 @@ class BookSeeder extends Seeder
     {
         $records = [
             [
-                'id' => 1,
                 'kode' => 'TEK000001',
-                'judul' => 'Youtube untuk pemula',
-                'pengarang' => 'Atta Halilintar',
-                'terbit' => 2020,
+                'judul' => 'Clean Code: A Handbook of Agile Software Craftsmanship',
+                'pengarang' => 'Robert C. Martin',
+                'terbit' => 2021,
                 'kategori' => 'Teknologi',
-                'jumlah' => 24,
+                'jumlah' => 12,
                 'dipinjam' => 1,
-
             ],
             [
-                'id' => 2,
                 'kode' => 'TEK000002',
-                'judul' => 'Cara menggunakan google secara efketif',
-                'pengarang' => 'Siri',
+                'judul' => 'Designing Data-Intensive Applications',
+                'pengarang' => 'Martin Kleppmann',
                 'terbit' => 2022,
                 'kategori' => 'Teknologi',
-                'jumlah' => 22,
-
+                'jumlah' => 8,
+                'dipinjam' => 0,
             ],
             [
-                'id' => 3,
-                'kode' => 'BHS000001',
-                'judul' => 'Bahasa Indonesia yang baik dan benar',
-                'pengarang' => 'Willy the kid',
-                'terbit' => 2021,
-                'kategori' => 'Bahasa',
-                'jumlah' => 20,
-                'dipinjam' => 1,
-
-            ],
-            [
-                'id' => 4,
-                'kode' => 'SOS000001',
-                'judul' => 'Bagaimana cara mendapatkan teman',
-                'pengarang' => 'Ansos Corporation',
-                'terbit' => 2025,
-                'kategori' => 'Sosial',
-                'jumlah' => 24,
-                
-
-            ],
-            [
-                'id' => 5,
-                'kode' => 'SNG000001',
-                'judul' => 'Sejarah kekaisaran Islam di Indonesia',
-                'pengarang' => 'Ust. Zakir Naik',
-                'terbit' => 2022,
-                'kategori' => 'Sejarah dan Geografi',
-                'jumlah' => 24,
-                
-
-            ],
-            [
-                'id' => 6,
                 'kode' => 'TEK000003',
-                'judul' => 'Youtube untuk pemula edisi 2',
-                'pengarang' => 'Atta Halilintar',
-                'terbit' => 2020,
+                'judul' => 'Arsitektur Aplikasi Web Modern dengan Laravel',
+                'pengarang' => 'Budi Santoso',
+                'terbit' => 2023,
                 'kategori' => 'Teknologi',
-                'jumlah' => 24,
-
+                'jumlah' => 15,
+                'dipinjam' => 0,
             ],
             [
-                'id' => 7,
                 'kode' => 'TEK000004',
-                'judul' => 'Cara menggunakan google secara efketif edisi 2',
-                'pengarang' => 'Siri',
-                'terbit' => 2022,
+                'judul' => 'Algoritma dan Struktur Data dengan Python',
+                'pengarang' => 'Rahmat Hidayat',
+                'terbit' => 2024,
                 'kategori' => 'Teknologi',
-                'jumlah' => 22,
+                'jumlah' => 10,
                 'dipinjam' => 2,
-
             ],
             [
-                'id' => 8,
-                'kode' => 'BHS000002',
-                'judul' => 'Bahasa Indonesia yang baik dan benar edisi 2',
-                'pengarang' => 'Willy the kid',
+                'kode' => 'BHS000001',
+                'judul' => 'Pedoman Umum Ejaan Bahasa Indonesia & Karya Ilmiah',
+                'pengarang' => 'Dr. Siti Aminah',
                 'terbit' => 2021,
                 'kategori' => 'Bahasa',
-                'jumlah' => 20,
-                
-
+                'jumlah' => 14,
+                'dipinjam' => 1,
             ],
             [
-                'id' => 9,
-                'kode' => 'SOS000002',
-                'judul' => 'Bagaimana cara mendapatkan teman edisi 2',
-                'pengarang' => 'Ansos Corporation',
-                'terbit' => 2025,
+                'kode' => 'BHS000002',
+                'judul' => 'Academic Writing for University Students',
+                'pengarang' => 'Alice Oshima',
+                'terbit' => 2020,
+                'kategori' => 'Bahasa',
+                'jumlah' => 9,
+                'dipinjam' => 0,
+            ],
+            [
+                'kode' => 'SOS000001',
+                'judul' => 'Sosiologi Masyarakat Digital di Indonesia',
+                'pengarang' => 'Prof. Hendro Prasetyo',
+                'terbit' => 2023,
                 'kategori' => 'Sosial',
-                'jumlah' => 24,
-                
-
+                'jumlah' => 10,
+                'dipinjam' => 0,
             ],
             [
-                'id' => 10,
+                'kode' => 'SOS000002',
+                'judul' => 'Psikologi Kognitif dan Pengambilan Keputusan',
+                'pengarang' => 'Nadia Kusuma',
+                'terbit' => 2022,
+                'kategori' => 'Sosial',
+                'jumlah' => 7,
+                'dipinjam' => 0,
+            ],
+            [
+                'kode' => 'SNG000001',
+                'judul' => 'Sejarah Nusantara: Dari Sriwijaya hingga Kemerdekaan',
+                'pengarang' => 'Ahmad Mansur',
+                'terbit' => 2021,
+                'kategori' => 'Sejarah dan Geografi',
+                'jumlah' => 11,
+                'dipinjam' => 0,
+            ],
+            [
                 'kode' => 'SNG000002',
-                'judul' => 'Sejarah kekaisaran Islam di Indonesia edisi 2',
-                'pengarang' => 'Ust. Zakir Naik',
-                'terbit' => 2022,
+                'judul' => 'Atlas Geografi Kepulauan Indonesia',
+                'pengarang' => 'Dewi Lestari, M.Si.',
+                'terbit' => 2024,
                 'kategori' => 'Sejarah dan Geografi',
-                'jumlah' => 24,
-                
-
+                'jumlah' => 6,
+                'dipinjam' => 0,
             ],
             [
-                'id' => 11,
-                'kode' => 'SNG000003',
-                'judul' => 'Penjajahan Belanda',
-                'pengarang' => 'Shogun',
-                'terbit' => 2022,
-                'kategori' => 'Sejarah dan Geografi',
-                'jumlah' => 24,
-                
-
+                'kode' => 'SNS000001',
+                'judul' => 'Statistika Terapan untuk Penelitian Sains',
+                'pengarang' => 'Dr. Agus Salim',
+                'terbit' => 2023,
+                'kategori' => 'Sains',
+                'jumlah' => 10,
+                'dipinjam' => 1,
+            ],
+            [
+                'kode' => 'EKO000001',
+                'judul' => 'Pengantar Ekonomi Digital dan Manajemen Inovasi',
+                'pengarang' => 'Rina Kartika',
+                'terbit' => 2024,
+                'kategori' => 'Ekonomi',
+                'jumlah' => 9,
+                'dipinjam' => 0,
             ],
         ];
+
         foreach ($records as $record) {
-            $book = new Book();
-            $book->firstOrCreate($record);
+            Book::firstOrCreate(['kode' => $record['kode']], $record);
         }
     }
 }

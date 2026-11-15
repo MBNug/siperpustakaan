@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Pengunjung;
 use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PengunjungSeeder extends Seeder
@@ -16,48 +15,22 @@ class PengunjungSeeder extends Seeder
      */
     public function run()
     {
-        //
-        $records = [
-            [
-                'tanggal' => Carbon::parse('2022-12-03'),
-                'jmlpengunjung' => 20,
-                'jmlpinjam' => 0
-            ],
-            [
-                'tanggal' => Carbon::parse('2022-12-04'),
-                'jmlpengunjung' => 19,
-                'jmlpinjam' => 0
-            ],
-            [
-                'tanggal' => Carbon::parse('2022-12-05'),
-                'jmlpengunjung' => 21,
-                'jmlpinjam' => 0
-            ],
-            [
-                'tanggal' => Carbon::parse('2022-12-06'),
-                'jmlpengunjung' => 22,
-                'jmlpinjam' => 0
-            ],
-            [
-                'tanggal' => Carbon::parse('2022-12-07'),
-                'jmlpengunjung' => 17,
-                'jmlpinjam' => 0
-            ],
-            [
-                'tanggal' => Carbon::parse('2022-12-08'),
-                'jmlpengunjung' => 25,
-                'jmlpinjam' => 1
-            ],
-            [
-                'tanggal' => Carbon::parse('2022-12-09'),
-                'jmlpengunjung' => 10,
-                'jmlpinjam' => 0
-            ],
-            
-        ];
-        foreach ($records as $record) {
-            $pengunjung = new Pengunjung();
-            $pengunjung->firstOrCreate($record);
+        $today = Carbon::today();
+        $startDate = $today->copy()->startOfWeek()->subDays(7);
+        $visitorPattern = [18, 24, 21, 29, 25, 14, 10, 22, 27, 31, 26, 33, 19, 16];
+        $borrowPattern = [2, 4, 3, 5, 3, 1, 0, 3, 4, 6, 3, 5, 2, 1];
+
+        $offset = 0;
+        for ($date = $startDate->copy(); $date->lte($today); $date->addDay()) {
+            $idx = $offset % count($visitorPattern);
+            Pengunjung::firstOrCreate(
+                ['tanggal' => $date->toDateString()],
+                [
+                    'jmlpengunjung' => $visitorPattern[$idx],
+                    'jmlpinjam' => $borrowPattern[$idx],
+                ]
+            );
+            $offset++;
         }
     }
 }

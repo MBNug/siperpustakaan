@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Borrow;
 use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class BorrowSeeder extends Seeder
@@ -16,65 +15,77 @@ class BorrowSeeder extends Seeder
      */
     public function run()
     {
-        //
-        
+        $today = Carbon::today();
+
         $records = [
             [
-                'id' => 1,
-                'kode_buku' => 'TEK000001',
+                'kode_buku' => 'TEK000002',
                 'nispeminjam' => 'DKP001',
-                'tanggalpinjam' => Carbon::parse('2022-05-24'),
-                'tanggalwajibkembali' => Carbon::parse('2022-05-31'),
-                'tanggalkembali'=>Carbon::parse('2022-05-30'),
+                'tanggalpinjam' => $today->copy()->subDays(12),
+                'tanggalwajibkembali' => $today->copy()->subDays(5),
+                'tanggalkembali' => $today->copy()->subDays(6),
                 'telat' => 0,
             ],
             [
-                'id' => 2,
-                'kode_buku' => 'TEK000004',
+                'kode_buku' => 'SNG000001',
                 'nispeminjam' => 'DKP002',
-                'tanggalpinjam' => Carbon::parse('2022-06-01'),
-                'tanggalwajibkembali' => Carbon::parse('2022-06-8'),
-                'tanggalkembali'=>Carbon::parse('2022-06-10'),
+                'tanggalpinjam' => $today->copy()->subDays(14),
+                'tanggalwajibkembali' => $today->copy()->subDays(7),
+                'tanggalkembali' => $today->copy()->subDays(5),
                 'telat' => 2,
-                
             ],
             [
-                'id' => 3,
+                'kode_buku' => 'SOS000001',
+                'nispeminjam' => 'DKP005',
+                'tanggalpinjam' => $today->copy()->subDays(9),
+                'tanggalwajibkembali' => $today->copy()->subDays(2),
+                'tanggalkembali' => $today->copy()->subDays(3),
+                'telat' => 0,
+            ],
+            [
+                'kode_buku' => 'TEK000001',
+                'nispeminjam' => 'DKP001',
+                'tanggalpinjam' => $today->copy()->subDays(3),
+                'tanggalwajibkembali' => $today->copy()->addDays(4),
+                'tanggalkembali' => null,
+                'telat' => 0,
+            ],
+            [
                 'kode_buku' => 'TEK000004',
                 'nispeminjam' => 'DKP002',
-                'tanggalpinjam' => Carbon::parse('2022-12-08'),
-                'tanggalwajibkembali' => Carbon::parse('2022-12-15'),
-                
+                'tanggalpinjam' => $today->copy()->subDays(9),
+                'tanggalwajibkembali' => $today->copy()->subDays(2),
+                'tanggalkembali' => null,
+                'telat' => 0,
             ],
             [
-                'id' => 4,
+                'kode_buku' => 'TEK000004',
+                'nispeminjam' => 'DKP006',
+                'tanggalpinjam' => $today->copy()->subDays(1),
+                'tanggalwajibkembali' => $today->copy()->addDays(6),
+                'tanggalkembali' => null,
+                'telat' => 0,
+            ],
+            [
                 'kode_buku' => 'BHS000001',
                 'nispeminjam' => 'DKP003',
-                'tanggalpinjam' => Carbon::parse('2022-12-01'),
-                'tanggalwajibkembali' => Carbon::parse('2022-12-08'),
-
+                'tanggalpinjam' => $today->copy()->subDays(2),
+                'tanggalwajibkembali' => $today->copy()->addDays(5),
+                'tanggalkembali' => null,
+                'telat' => 0,
             ],
             [
-                'id' => 5,
-                'kode_buku' => 'TEK000001',
-                'nispeminjam' => 'DKP003',
-                'tanggalpinjam' => Carbon::parse('2022-05-24'),
-                'tanggalwajibkembali' => Carbon::parse('2022-05-31'),
-            ],
-            [
-                'id' => 6,
-                'kode_buku' => 'TEK000004',
+                'kode_buku' => 'SNS000001',
                 'nispeminjam' => 'DKP004',
-                'tanggalpinjam' => Carbon::parse('2022-06-01'),
-                'tanggalwajibkembali' => Carbon::parse('2022-06-8'),
-                
+                'tanggalpinjam' => $today->copy(),
+                'tanggalwajibkembali' => $today->copy()->addDays(7),
+                'tanggalkembali' => null,
+                'telat' => 0,
             ],
-            
         ];
+
         foreach ($records as $record) {
-            $borrow = new Borrow();
-            $borrow->firstOrCreate($record);
+            Borrow::create($record);
         }
-        
     }
 }
