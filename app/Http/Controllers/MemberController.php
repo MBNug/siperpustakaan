@@ -45,14 +45,13 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $request->validate([
+        $validated = $request->validate([
             'nis' => 'required|unique:members|max:255',
             'nama' => 'required',
             'alamat' => 'required',
         ]);
 
-        Member::create($request->all());
+        Member::create($validated);
 
         Fungsi::sweetalert('Berhasil menambahkan anggota baru', 'success', 'Berhasil!');
         return redirect(route('member'));
@@ -90,15 +89,14 @@ class MemberController extends Controller
      */
     public function update(Request $request, Member $member)
     {
-        //
-        $request->validate([
+        $validated = $request->validate([
             'nis' => ['required', 'max:255', Rule::unique('members')->ignore($member->id)],
             'nama' => 'required',
             'alamat' => 'required',
             'jmlkunjungan' => 'required',
         ]);
 
-        $member->update($request->all());
+        $member->update($validated);
         Fungsi::sweetalert('Data anggota berhasil diupdate', 'success', 'Berhasil!');
         return redirect(route('member'));
     }
@@ -110,13 +108,12 @@ class MemberController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function delete($id){
-        $member = Member::find($id);
+        $member = Member::findOrFail($id);
         return view('member.delete', compact('member'));
 
     }
     public function destroy($id){
-        // dd($id);
-        $member = Member::find($id);
+        $member = Member::findOrFail($id);
         $member->delete();
         Fungsi::sweetalert('Peminjaman berhasil dihapus', 'success', 'Berhasil!');
         return redirect()->route('member');
@@ -124,8 +121,7 @@ class MemberController extends Controller
 
 
     public function lihatpinjaman($id){
-        
-        $member = Member::find($id);
+        $member = Member::findOrFail($id);
         $books = Book::all();
         $borrows = Borrow::all();
         $nis = $member->nis;

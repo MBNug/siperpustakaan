@@ -30,10 +30,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Handle CRUD event
     Route::resource('/book', BookController::class, [
+        'except' => ['show'],
         'names' => [
             'index' => 'book',
             'create' => 'book.create',
-            // 'destroy' => 'book.delete'
         ]
     ]);
     Route::get('/book/{id}/delete', [BookController::class, 'delete']) -> name('book.delete');
@@ -60,6 +60,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         ]
     ]);
     Route::get('/borrow/{id}/delete', [BorrowController::class, 'delete']) -> name('borrow.delete');
-    Route::get('/borrow/{id}/kembalikan', [BorrowController::class, 'kembalikan'])->name('borrow.kembalikan');
+    Route::post('/borrow/{id}/kembalikan', [BorrowController::class, 'kembalikan'])->name('borrow.kembalikan');
     
 });

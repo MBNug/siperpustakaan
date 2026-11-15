@@ -132,7 +132,7 @@ return [
     */
 
     'features' => [
-        Features::registration(),
+        // Features::registration(), // Disabled: prevent public visitors from registering admin accounts
         Features::resetPasswords(),
         // Features::emailVerification(),
         Features::updateProfileInformation(),

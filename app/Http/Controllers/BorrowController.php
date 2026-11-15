@@ -73,25 +73,26 @@ class BorrowController extends Controller
                 return redirect(route('borrow'));
             }
             else{
-                $request->validate([
+                $validated = $request->validate([
                     'kode_buku' => 'required',
                     'nispeminjam' => 'required',
                     'tanggalpinjam' => 'required',
                     'tanggalwajibkembali' => 'required',
                 ]);
         
-                $borrow = Borrow::create($request->all());
-                $book =Book::find($borrow->book->id);
+                $borrow = Borrow::create($validated);
+                $book = Book::find($borrow->book->id);
                 $book->dipinjam = $book->dipinjam + 1;
                 $book->save();
 
-                $a = (Pengunjung::where('tanggal', '=', $request->tanggalpinjam)
-                        ->first());
-                $a->jmlpinjam +=1;
-                $a->save();
+                $a = Pengunjung::where('tanggal', '=', $request->tanggalpinjam)->first();
+                if ($a) {
+                    $a->jmlpinjam += 1;
+                    $a->save();
+                }
                 Fungsi::sweetalert('Berhasil menambahkan peminjaman baru', 'success', 'Berhasil!');
                 return redirect(route('borrow'));
-                    }
+            }
             
         }
         
@@ -134,33 +135,29 @@ class BorrowController extends Controller
      */
     public function update(Request $request, Borrow $borrow)
     {
-        //
-        $request->validate([
-            // 'kode_buku', 'nispeminjam', 'tanggalpinjam', 'tanggalwajibkembali', 'tanggalkembali', 'telat'
+        $validated = $request->validate([
             'kode_buku' => 'required',
             'nispeminjam' => 'required',
             'tanggalpinjam' => 'required',
             'tanggalwajibkembali' => 'required',
+            'tanggalkembali' => 'nullable|date',
         ]);
 
-        if($request->tanggalkembali == null){
-            $request->telat = 0;
-        }
-        else{
+        $selisih = 0;
+        if ($request->tanggalkembali !== null) {
             $kembali = Carbon::parse($request->tanggalkembali);
             $wajibkembali = Carbon::parse($request->tanggalwajibkembali);
             $selisih = $wajibkembali->diffInDays($kembali, false);
-            if($selisih<0){
+            if ($selisih < 0) {
                 $selisih = 0;
             }
         }
-        
-        $borrow->update($request->all());
+
+        $borrow->update($validated);
         $borrow->telat = $selisih;
         $borrow->save();
         Fungsi::sweetalert('Peminjaman berhasil diupdate', 'success', 'Berhasil!');
         return redirect(route('borrow'));
-        // return response(@dd($request), 200);
     }
 
     /**
@@ -170,13 +167,12 @@ class BorrowController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function delete($id){
-        $borrow = Borrow::find($id);
+        $borrow = Borrow::findOrFail($id);
         return view('borrow.delete', compact('borrow'));
 
     }
     public function destroy($id){
-        // dd($id);
-        $borrow = Borrow::find($id);
+        $borrow = Borrow::findOrFail($id);
         $dikembalikan = $borrow->tanggalkembali;
         if($dikembalikan === null){
             $book = Book::find($borrow->book->id);
