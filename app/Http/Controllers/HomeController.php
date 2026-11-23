@@ -15,59 +15,49 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        
+        $todayStats = Pengunjung::firstOrCreate(
+            ['tanggal' => Carbon::today()->toDateString()],
+            ['jmlpengunjung' => 0, 'jmlpinjam' => 0]
+        );
 
-        for($i=0; $i<31; $i++){
-            $a = (Pengunjung::where('tanggal', '=', Carbon::today()->startOfMonth()->addDays($i)->toDateString())
-                        ->first());
-            $b = $a===null;
-            if($b){
-                $a = Pengunjung::create(['tanggal'=>Carbon::today()->startOfMonth()->addDays($i),'jmlpengunjung'=>0, 'jmlpinjam'=>0]);
-            }
-            
-        }
-        
-        
-        $members = Member::all();
-        return view('home', compact('members'));
+        $members = Member::orderBy('nama')->get();
+        $totalBooks = Book::sum('jumlah');
+
+        return view('home', compact('members', 'todayStats', 'totalBooks'));
     }
 
     public function redirect()
     {
-        $user = User::find(Auth::user()->id);
-        if ($user) {
+        if (Auth::check()) {
             return redirect()->route('admin.dashboard');
-        } else {
-            return redirect()->route('home');
         }
+
+        return redirect()->route('home');
     }
 
     public function hadir(Request $request)
     {
-       
         $request->validate([
-            'nis' => ['required'],
+            'nis' => ['required', 'string', 'max:255'],
         ]);
-        
 
-        $a = (Pengunjung::where('tanggal', '=', Carbon::today()->toDateString())
-                        ->first());
-        $a->jmlpengunjung +=1;
-        $a->save();
-        $member = Member::where('nis', '=', $request->nis)
-                        ->first();
-        if($member===null){
-            Fungsi::sweetalert('NIS Salah!', 'error', 'Gagal!');
-            return redirect()->route('home');
+        $nis = trim((string) $request->input('nis'));
+        $member = Member::where('nis', '=', $nis)->first();
+
+        if ($member === null) {
+            Fungsi::sweetalert('NIS tidak terdaftar!', 'error', 'Gagal!');
+            return redirect()->route('home')->withInput();
         }
-        else{
-            $member->jmlkunjungan +=1;
-            $member->save();
-            Fungsi::sweetalert('Berhasil absen!', 'success', 'Berhasil!');
-            return redirect()->route('home');
-        }
-        
-        
+
+        $todayStats = Pengunjung::firstOrCreate(
+            ['tanggal' => Carbon::today()->toDateString()],
+            ['jmlpengunjung' => 0, 'jmlpinjam' => 0]
+        );
+        $todayStats->increment('jmlpengunjung');
+        $member->increment('jmlkunjungan');
+
+        Fungsi::sweetalert('Selamat datang, '.$member->nama.'! Kehadiran tercatat.', 'success', 'Berhasil!');
+        return redirect()->route('home');
     }
     
 }

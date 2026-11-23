@@ -1,72 +1,93 @@
 @extends('layouts.admin')
 
-@section('title', 'Kelola Buku')
+@section('title', 'Katalog Buku — SIPerpustakaan')
+@section('crumb', 'Katalog Buku')
 
 @section('content')
-<div class="container">
-    <!-- Page Heading -->
-    <section class="content-header">
-        <div class="row">
-            <div class="col-lg-9">
-                <h1 class="h3 mb-4 text-gray-800">@yield('title')</h1>
-            </div>
-            <div class="col-lg-3">
-                <small>
-                    <ol class="breadcrumb">
-                        <li><a href="" class="text-decoration-none text-gray-800 mr-2"><i class="fa fa-tachometer-alt mr-1"></i> Home</a></li>
-                        <li class="active"><i class="fa fa-chevron-right fa-sm mr-2"></i>Buku</li>
-                    </ol>
-                </small>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Katalog Koleksi Buku</h1>
+            <p class="page-desc">Kelola stok eksemplar, status peminjaman, dan metadata buku perpustakaan.</p>
+        </div>
+        <div class="page-actions">
+            <a href="{{ route('book.create') }}" class="btn-desk btn-desk-primary">
+                <i class="fas fa-plus"></i>
+                <span>Tambah Buku</span>
+            </a>
+        </div>
+    </div>
+
+    <section class="sheet">
+        <div class="sheet-body">
+            <div class="table-responsive">
+                <table class="table desk-table" id="booksTable">
+                    <thead>
+                        <tr>
+                            <th>Kode</th>
+                            <th>Judul Buku</th>
+                            <th>Pengarang</th>
+                            <th>Tahun &amp; Kategori</th>
+                            <th>Rasio Stok</th>
+                            <th class="text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($books as $book)
+                            <tr>
+                                <td class="mono font-weight-bold" style="color: var(--text-primary);">{{ $book->kode }}</td>
+                                <td>
+                                    <div class="font-weight-bold" style="color: var(--text-primary);">{{ $book->judul }}</div>
+                                </td>
+                                <td>{{ $book->pengarang }}</td>
+                                <td>
+                                    <span class="num font-weight-bold">{{ $book->terbit }}</span>
+                                    <span class="text-muted mx-1">&middot;</span>
+                                    <span class="desk-pill desk-pill-slate">{{ $book->kategori }}</span>
+                                </td>
+                                <td>
+                                    @include('partials.stock-meter', ['book' => $book])
+                                </td>
+                                <td class="text-right text-nowrap">
+                                    <a href="{{ route('book.edit', $book->id) }}" class="btn-desk btn-desk-secondary btn-desk-sm" title="Ubah data buku">
+                                        <i class="fas fa-pen"></i>
+                                        <span>Edit</span>
+                                    </a>
+                                    @if ($book->dipinjam > 0)
+                                        <button type="button" class="btn-desk btn-desk-ghost btn-desk-sm text-muted" disabled title="Tidak dapat dihapus saat masih ada eksemplar dipinjam">
+                                            <i class="fas fa-lock"></i>
+                                        </button>
+                                    @else
+                                        <form action="{{ route('book.destroy', $book->id) }}" method="POST" class="d-inline js-confirm-action" data-title="Hapus Buku?" data-text="Buku {{ $book->judul }} akan dihapus permanen dari katalog." data-confirm="Ya, hapus">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-desk btn-desk-danger btn-desk-sm" title="Hapus buku">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>
-    <div class="row">
-        <div class="col-lg">
-            <a href="{{ route('book.create') }}" class="btn btn-primary mb-3"><i class="fa fa-plus mr-2"></i>Tambah Buku Baru</a>
-            <div class="card shadow mb-4">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover datatable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th>Kode Buku</th>
-                                    <th>Judul</th>
-                                    <th>Penulis</th>
-                                    <th>Tahun Terbit</th>
-                                    <th>Kategori</th>
-                                    <th>Jumlah Total</th>
-                                    <th>Jumlah Dipinjam</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($books as $book)
-                                <tr>
-                                    <th scope="row">{{ $loop->iteration }}</th>
-                                    <td>{{ $book->kode }}</td>
-                                    <td>{{ $book->judul }}</td>
-                                    <td>{{ $book->pengarang }}</td>
-                                    <td>{{ $book->terbit }}</td>
-                                    <td>{{ $book->kategori }}</td>
-                                    <td>{{ $book->jumlah }}</td>
-                                    <td>{{ $book->dipinjam }}</td>
-                                    <td>
-                                        <a href="{{ route('book.edit', $book->id) }}" class="btn btn-warning btn-sm mt-1" title="Edit Buku"><i class="fa fa-edit"></i>     Edit</a>
-                                        <a data-toggle="modal" id="smallButton" class="btn btn-danger btn-sm mt-1" data-target="#smallModal" data-attr="{{ route('book.delete', $book->id) }}" title="Hapus Buku">
-                                            <i class="fas fa-trash "></i>      Hapus
-                                        </a>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+@endsection
 
+@section('script')
+    <script>
+        $(function () {
+            $('#booksTable').DataTable({
+                language: {
+                    search: 'Cari:',
+                    lengthMenu: 'Tampilkan _MENU_ entri',
+                    info: 'Menampilkan _START_–_END_ dari _TOTAL_ buku',
+                    infoEmpty: 'Belum ada data buku',
+                    zeroRecords: 'Tidak ada buku yang cocok',
+                    paginate: { previous: 'Sebelumnya', next: 'Berikutnya' }
+                }
+            });
+        });
+    </script>
 @endsection

@@ -10,6 +10,7 @@ use App\Libraries\Fungsi;
 use App\Models\Pengunjung;
 use Illuminate\Http\Request;
 use App\Exports\BorrowExport;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\StoreBorrowRequest;
@@ -24,9 +25,7 @@ class BorrowController extends Controller
      */
     public function index()
     {
-        //
-
-        $borrows = Borrow::all();
+        $borrows = Borrow::with(['book', 'member'])->latest('id')->get();
 
         return view('borrow.index', compact('borrows'));
     }
@@ -52,52 +51,39 @@ class BorrowController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'kode_buku' => 'required|string',
+            'nispeminjam' => 'required|string',
+            'tanggalpinjam' => 'required|date',
+            'tanggalwajibkembali' => 'required|date|after_or_equal:tanggalpinjam',
+        ]);
 
-        
-        $books = Book::where('kode', '=', $request->kode_buku)->first();
-        $members = Member::where('nis', '=', $request->nispeminjam)->first();
-        // dd($books);
-        if($books ===null | $members===null){
-            Fungsi::sweetalert('NIS atau Kode Buku tidak terdaftar', 'error', 'MAAF!');
-            return redirect(route('borrow'));
+        $books = Book::where('kode', '=', $validated['kode_buku'])->first();
+        $members = Member::where('nis', '=', $validated['nispeminjam'])->first();
+
+        if ($books === null || $members === null) {
+            Fungsi::sweetalert('NIS atau Kode Buku tidak terdaftar', 'error', 'Maaf!');
+            return redirect()->back()->withInput();
         }
-        else{
 
-            if($books->dipinjam === $books->jumlah){
-                Fungsi::sweetalert('Tidak ada buku yang tersedia', 'error', 'MAAF!');
-                return redirect(route('borrow'));
-            }
-            elseif($request->tanggalpinjam > $request->tanggalwajibkembali){
-                Fungsi::sweetalert('Tanggal pinjam dan tanggal kembali tidak benar', 'error', 'MAAF!');
-                return redirect(route('borrow'));
-            }
-            else{
-                $validated = $request->validate([
-                    'kode_buku' => 'required',
-                    'nispeminjam' => 'required',
-                    'tanggalpinjam' => 'required',
-                    'tanggalwajibkembali' => 'required',
-                ]);
-        
-                $borrow = Borrow::create($validated);
-                $book = Book::find($borrow->book->id);
-                $book->dipinjam = $book->dipinjam + 1;
-                $book->save();
-
-                $a = Pengunjung::where('tanggal', '=', $request->tanggalpinjam)->first();
-                if ($a) {
-                    $a->jmlpinjam += 1;
-                    $a->save();
-                }
-                Fungsi::sweetalert('Berhasil menambahkan peminjaman baru', 'success', 'Berhasil!');
-                return redirect(route('borrow'));
-            }
-            
+        if ($books->dipinjam >= $books->jumlah) {
+            Fungsi::sweetalert('Stok buku sedang kosong (semua sedang dipinjam)', 'error', 'Maaf!');
+            return redirect()->back()->withInput();
         }
-        
 
-        
+        DB::transaction(function () use ($validated, $books) {
+            Borrow::create($validated);
+            $books->increment('dipinjam');
+
+            $pengunjung = Pengunjung::firstOrCreate(
+                ['tanggal' => Carbon::parse($validated['tanggalpinjam'])->toDateString()],
+                ['jmlpengunjung' => 0, 'jmlpinjam' => 0]
+            );
+            $pengunjung->increment('jmlpinjam');
+        });
+
+        Fungsi::sweetalert('Berhasil menambahkan peminjaman baru', 'success', 'Berhasil!');
+        return redirect(route('borrow'));
     }
 
     /**
@@ -136,26 +122,54 @@ class BorrowController extends Controller
     public function update(Request $request, Borrow $borrow)
     {
         $validated = $request->validate([
-            'kode_buku' => 'required',
-            'nispeminjam' => 'required',
-            'tanggalpinjam' => 'required',
-            'tanggalwajibkembali' => 'required',
-            'tanggalkembali' => 'nullable|date',
+            'kode_buku' => 'required|exists:books,kode',
+            'nispeminjam' => 'required|exists:members,nis',
+            'tanggalpinjam' => 'required|date',
+            'tanggalwajibkembali' => 'required|date|after_or_equal:tanggalpinjam',
+            'tanggalkembali' => 'nullable|date|after_or_equal:tanggalpinjam',
         ]);
 
         $selisih = 0;
-        if ($request->tanggalkembali !== null) {
-            $kembali = Carbon::parse($request->tanggalkembali);
-            $wajibkembali = Carbon::parse($request->tanggalwajibkembali);
-            $selisih = $wajibkembali->diffInDays($kembali, false);
-            if ($selisih < 0) {
-                $selisih = 0;
-            }
+        if (!empty($validated['tanggalkembali'])) {
+            $kembali = Carbon::parse($validated['tanggalkembali'])->startOfDay();
+            $wajibkembali = Carbon::parse($validated['tanggalwajibkembali'])->startOfDay();
+            $selisih = max(0, $wajibkembali->diffInDays($kembali, false));
         }
 
-        $borrow->update($validated);
-        $borrow->telat = $selisih;
-        $borrow->save();
+        $wasReturned = ($borrow->tanggalkembali !== null);
+        $isNowReturned = !empty($validated['tanggalkembali']);
+        $oldBookKode = $borrow->kode_buku;
+        $newBookKode = $validated['kode_buku'];
+
+        DB::transaction(function () use ($borrow, $validated, $selisih, $wasReturned, $isNowReturned, $oldBookKode, $newBookKode) {
+            if (!$wasReturned && $oldBookKode !== $newBookKode) {
+                $oldBook = Book::where('kode', $oldBookKode)->first();
+                if ($oldBook && $oldBook->dipinjam > 0) {
+                    $oldBook->decrement('dipinjam');
+                }
+                if (!$isNowReturned) {
+                    $newBook = Book::where('kode', $newBookKode)->first();
+                    if ($newBook && $newBook->dipinjam < $newBook->jumlah) {
+                        $newBook->increment('dipinjam');
+                    }
+                }
+            } elseif (!$wasReturned && $isNowReturned) {
+                $book = Book::where('kode', $newBookKode)->first();
+                if ($book && $book->dipinjam > 0) {
+                    $book->decrement('dipinjam');
+                }
+            } elseif ($wasReturned && !$isNowReturned) {
+                $book = Book::where('kode', $newBookKode)->first();
+                if ($book && $book->dipinjam < $book->jumlah) {
+                    $book->increment('dipinjam');
+                }
+            }
+
+            $borrow->update($validated);
+            $borrow->telat = $selisih;
+            $borrow->save();
+        });
+
         Fungsi::sweetalert('Peminjaman berhasil diupdate', 'success', 'Berhasil!');
         return redirect(route('borrow'));
     }
@@ -173,13 +187,12 @@ class BorrowController extends Controller
     }
     public function destroy($id){
         $borrow = Borrow::findOrFail($id);
-        $dikembalikan = $borrow->tanggalkembali;
-        if($dikembalikan === null){
-            $book = Book::find($borrow->book->id);
-            $book->dipinjam = $book->dipinjam - 1;
-            $book->save();
-        }
-        $borrow->delete();
+        DB::transaction(function () use ($borrow) {
+            if ($borrow->tanggalkembali === null && $borrow->book && $borrow->book->dipinjam > 0) {
+                $borrow->book->decrement('dipinjam');
+            }
+            $borrow->delete();
+        });
         Fungsi::sweetalert('Peminjaman berhasil dihapus', 'success', 'Berhasil!');
         return redirect()->route('borrow');
     }
@@ -187,24 +200,27 @@ class BorrowController extends Controller
     public function kembalikan(Request $request, $id)
     {
         $borrow = Borrow::findOrFail($id);
-        $borrow->tanggalkembali = Carbon::now();
-        $kembali = Carbon::parse($borrow->tanggalkembali);
-        $wajibkembali = Carbon::parse($borrow->tanggalwajibkembali);
-        $selisih = $wajibkembali->diffInDays($kembali, false);
-
-        if($selisih < 0){
-            $selisih = 0;
+        if ($borrow->tanggalkembali !== null) {
+            Fungsi::sweetalert('Buku ini sudah dikembalikan sebelumnya.', 'info', 'Info');
+            return redirect()->route('borrow');
         }
 
-        $borrow->telat = $selisih;
-        $borrow->save();
+        DB::transaction(function () use ($borrow) {
+            $kembali = Carbon::today();
+            $wajibkembali = Carbon::parse($borrow->tanggalwajibkembali)->startOfDay();
+            $selisih = max(0, $wajibkembali->diffInDays($kembali, false));
 
-        $book =Book::findorFail($borrow->book->id);
-        $book->dipinjam = $book->dipinjam - 1;
-        $book->save();
+            $borrow->tanggalkembali = $kembali;
+            $borrow->telat = $selisih;
+            $borrow->save();
+
+            if ($borrow->book && $borrow->book->dipinjam > 0) {
+                $borrow->book->decrement('dipinjam');
+            }
+        });
+
         Fungsi::sweetalert('Buku berhasil dikembalikan', 'success', 'Berhasil!');
         return redirect()->route('borrow');
-        
     }
 
     public function export_excel()

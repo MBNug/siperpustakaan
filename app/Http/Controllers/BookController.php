@@ -23,12 +23,12 @@ class BookController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kode' => 'required|unique:books|max:255',
-            'judul' => 'required',
-            'pengarang' => 'required',
-            'terbit' => 'required',
-            'kategori' => 'required',
-            'jumlah' => 'required',
+            'kode' => 'required|string|unique:books|max:255',
+            'judul' => 'required|string|max:255',
+            'pengarang' => 'required|string|max:255',
+            'terbit' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'kategori' => 'required|string|max:255',
+            'jumlah' => 'required|integer|min:0',
         ]);
 
         Book::create($validated);
@@ -49,13 +49,13 @@ class BookController extends Controller
     public function update(Request $request, Book $book)
     {
         $validated = $request->validate([
-            'kode' => ['required', 'max:255', Rule::unique('books')->ignore($book->id)],
-            'judul' => 'required',
-            'pengarang' => 'required',
-            'terbit' => 'required',
-            'kategori' => 'required',
-            'jumlah' => 'required',
-            'dipinjam' => 'required',
+            'kode' => ['required', 'string', 'max:255', Rule::unique('books')->ignore($book->id)],
+            'judul' => 'required|string|max:255',
+            'pengarang' => 'required|string|max:255',
+            'terbit' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'kategori' => 'required|string|max:255',
+            'jumlah' => 'required|integer|min:0',
+            'dipinjam' => 'required|integer|min:0|lte:jumlah',
         ]);
 
         $book->update($validated);
@@ -65,13 +65,16 @@ class BookController extends Controller
 
     
     public function delete($id){
-        $book = Book::find($id);
+        $book = Book::findOrFail($id);
         return view('book.delete', compact('book'));
 
     }
     public function destroy($id){
-        // dd($id);
-        $book = Book::find($id);
+        $book = Book::findOrFail($id);
+        if ($book->dipinjam > 0) {
+            Fungsi::sweetalert('Buku tidak dapat dihapus karena masih ada salinan yang sedang dipinjam.', 'error', 'Gagal!');
+            return redirect()->route('book');
+        }
         $book->delete();
         Fungsi::sweetalert('Buku berhasil dihapus', 'success', 'Berhasil!');
         return redirect()->route('book');

@@ -1,58 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
-
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Login Pustakawan — SIPerpustakaan')</title>
 
-    <title>@yield('title')</title>
-
-    <!-- Custom fonts for this template-->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/css/sb-admin-2.min.css">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('css/circulation.css') }}">
 </head>
 
-<body class="bg-gradient-primary">
+<body>
+    <div class="auth-split">
+        <aside class="auth-aside">
+            <div>
+                <a href="{{ route('home') }}" class="d-inline-flex align-items-center text-white text-decoration-none" style="gap: 12px;">
+                    <span class="desk-brand-mark">
+                        <i class="fas fa-book-open"></i>
+                    </span>
+                    <div>
+                        <div class="desk-brand-title">SIPerpustakaan</div>
+                        <div class="desk-brand-sub">Sistem Informasi Perpustakaan Digital</div>
+                    </div>
+                </a>
 
-    @yield('content')
+                <h1 class="mt-5 mb-3 font-weight-bold" style="font-size: 32px; line-height: 1.2; letter-spacing: -0.025em; max-width: 420px;">
+                    Kendali sirkulasi koleksi, anggota, dan keterlambatan dalam satu meja kerja.
+                </h1>
+                <p style="color: var(--text-on-shell-muted); font-size: 15px; max-width: 430px;">
+                    Pantau rasio stok tersedia secara real-time, catat peminjaman dan pengembalian sekali klik, serta ekspor laporan sirkulasi ke Excel.
+                </p>
+            </div>
 
-    <div class="flash-data" data-text="{{ session()->get('text')  }}" data-title="{{ session()->get('title')  }}" data-icon="{{ session()->get('icon') }}"></div>
-    <!-- Bootstrap core JavaScript-->
+            <div class="pt-4" style="border-top: 1px solid rgba(255, 255, 255, 0.12); font-size: 13px; color: var(--text-on-shell-muted);">
+                <div class="d-flex flex-wrap" style="gap: 20px;">
+                    <span><i class="fas fa-check mr-2 text-success"></i>Cek stok buku live</span>
+                    <span><i class="fas fa-check mr-2 text-success"></i>Deteksi keterlambatan</span>
+                    <span><i class="fas fa-check mr-2 text-success"></i>Absensi NIS mandiri</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="auth-panel">
+            @yield('content')
+        </main>
+    </div>
+
     <script src="{{ asset('assets/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/bootstrap.bundle.min.js') }}"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="{{ asset('assets/jquery.easing.min.js') }}"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/js/sb-admin-2.min.js"></script>
-    <script src="{{ asset('assets/sweetalert2.all.min.js') }}"></script>
-
-    <script type="text/javascript">
-        document.write("</bo" + "dy>" + "</ht" + "ml>");
-        const textflashData = $('.flash-data').data('text');
-        const titleflashData = $('.flash-data').data('title');
-        const iconflashData = $('.flash-data').data('icon');
-
-        if (textflashData && titleflashData && iconflashData) {
-            Swal.fire({
-                title: titleflashData
-                , text: textflashData
-                , icon: iconflashData
-            });
-        }
-
-    </script>
-    <!-- </body></html> -->
-</Body>
+    @yield('script')
+</body>
 
 </html>

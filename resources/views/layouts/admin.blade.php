@@ -1,286 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>@yield('title')</title>
-    <!-- Favicon -->
-    <link href="{{ asset('img/logo/favicon.ico') }}" rel="icon">
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
-    <!-- CSS Files -->
-    <link href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" type="text/css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'SIPerpustakaan — Konsol Pustakawan')</title>
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/css/sb-admin-2.min.css" rel="stylesheet" >
-    
-    <!-- Datatables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.2/css/buttons.dataTables.min.css">
-
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap4.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('css/circulation.css') }}">
+    @yield('style')
 </head>
 
-<body class="">
-    <!-- Page Wrapper -->
-    <div id="wrapper">
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<body>
+    <div class="desk-shell">
+        <div class="desk-backdrop" id="deskBackdrop"></div>
 
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('home') }}">
-                <div class="sidebar-brand-text mx-2">SIPerpustakaan</div>
+        <aside class="desk-sidebar" id="deskSidebar">
+            <a href="{{ route('admin.dashboard') }}" class="desk-brand text-decoration-none">
+                <span class="desk-brand-mark">
+                    <i class="fas fa-book-open"></i>
+                </span>
+                <span>
+                    <span class="desk-brand-title d-block">SIPerpustakaan</span>
+                    <span class="desk-brand-sub d-block">Konsol Sirkulasi</span>
+                </span>
             </a>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider">
+            <nav class="desk-nav" aria-label="Navigasi Utama">
+                @hasSection('sidebar')
+                    @yield('sidebar')
+                @else
+                    <div class="desk-nav-group">Ringkasan</div>
+                    <a href="{{ route('admin.dashboard') }}" class="desk-nav-link {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}">
+                        <i class="fas fa-gauge-high"></i>
+                        <span>Dashboard</span>
+                    </a>
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Menu Utama
+                    <div class="desk-nav-group">Layanan Sirkulasi</div>
+                    <a href="{{ route('borrow') }}" class="desk-nav-link {{ request()->routeIs('borrow*') ? 'is-active' : '' }}">
+                        <i class="fas fa-arrows-rotate"></i>
+                        <span>Peminjaman</span>
+                    </a>
+                    <a href="{{ route('book') }}" class="desk-nav-link {{ request()->routeIs('book*') ? 'is-active' : '' }}">
+                        <i class="fas fa-books fas fa-book"></i>
+                        <span>Katalog Buku</span>
+                    </a>
+                    <a href="{{ route('member') }}" class="desk-nav-link {{ request()->routeIs('member*') ? 'is-active' : '' }}">
+                        <i class="fas fa-users"></i>
+                        <span>Anggota</span>
+                    </a>
+                @endif
+            </nav>
+
+            <div class="desk-sidebar-footer">
+                <a href="{{ route('home') }}" class="desk-kiosk-shortcut text-decoration-none">
+                    <span><i class="fas fa-id-card mr-2"></i>Halaman Absensi</span>
+                    <i class="fas fa-arrow-up-right-from-square" style="font-size: 11px;"></i>
+                </a>
             </div>
+        </aside>
 
-            <li class="nav-item{{ request()->is('admin/dashboard') ? ' active' : ''}}">
-                <a class="nav-link" href="{{ route('admin.dashboard') }}">
-                    <i class="fas fa-fw fa-home"></i>
-                    <span>Home</span>
-                </a>
-            </li>
-
-            {{-- <li class="nav-item{{ request()->is('event/registration') ? ' active' : ''}}">
-                <a class="nav-link" href="{{ route('event.registration.index') }}">
-                    <i class="fa fa-fw fa-users"></i>
-                    <span>Lihat Pendaftaran</span>
-                </a>
-            </li> --}}
-
-            {{-- Buku --}}
-            <li class="nav-item{{ request()->is('book') || request()->is('book/create') || request()->is('book/*/edit') ? ' active' : ''}}">
-                <a class="nav-link" href="{{ route('book') }}">
-                    <i class="fas fa-fw fa-book"></i>
-                    <span>Kelola Buku</span>
-                </a>
-            </li>
-            {{-- Anggota --}}
-            <li class="nav-item{{ request()->is('member') || request()->is('member/create') || request()->is('member/*/edit') || request()->is('member/*/borrow') ? ' active' : ''}}">
-                <a class="nav-link" href="{{ route('member') }}">
-                    <i class="fas fa-fw fa-address-book"></i>
-                    <span>Anggota</span>
-                </a>
-            </li>
-            {{-- Peminjaman --}}
-            <li class="nav-item{{ request()->is('borrow') || request()->is('borrow/create') || request()->is('borrow/*/edit') ? ' active' : ''}}">
-                <a class="nav-link" href="{{ route('borrow') }}">
-                    <i class="fas fa-fw fa-file-export"></i>
-                    <span>Peminjaman</span>
-                </a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider mb-0">
-
-            <!-- Logout -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('logout') }}" data-toggle="modal" data-target="#logoutModal" >
-                    <i class="fas fa-fw fa-sign-out-alt"></i>
-                    <span>Logout</span></a>
-            </li>
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-        </ul>
-        <!-- End of Sidebar -->
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
-
-            <!-- Main Content -->
-            <div id="content">
-
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
+        <div class="desk-main">
+            <header class="desk-topbar">
+                <div class="desk-topbar-left">
+                    <button type="button" class="desk-menu-toggle" id="deskMenuToggle" aria-label="Buka menu navigasi">
+                        <i class="fas fa-bars"></i>
                     </button>
+                    <div class="desk-breadcrumb">
+                        <span>SIPerpustakaan</span>
+                        <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+                        <strong>@yield('crumb', 'Konsol Admin')</strong>
+                    </div>
+                </div>
 
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
-
-                        <div class="topbar-divider d-none d-sm-block"></div>
-
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img class="img-profile rounded-circle" src="@auth https://ui-avatars.com/api/?name={{ Auth::user()->name }} @endauth">
-                                <span class="ml-2 d-none d-lg-inline text-gray-600 small">@auth {{ Auth::user()->name }}@endauth</span>
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in fadeInDown" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
-                                    <i class="fas fa-home fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Dashboard
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ route('logout') }}" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
+                <div class="desk-topbar-right">
+                    <div class="dropdown">
+                        <button type="button" class="desk-user-trigger dropdown-toggle" id="deskUserMenu" data-toggle="dropdown" aria-expanded="false">
+                            <span class="desk-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}</span>
+                            <span class="d-none d-sm-inline">{{ Auth::user()->name ?? 'Pustakawan' }}</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right shadow-sm border" aria-labelledby="deskUserMenu" style="border-radius: 10px; min-width: 210px;">
+                            <div class="px-3 py-2 border-bottom">
+                                <div class="font-weight-bold" style="font-size: 13px;">{{ Auth::user()->name ?? 'Pustakawan' }}</div>
+                                <div class="text-muted" style="font-size: 12px;">{{ Auth::user()->email ?? '' }}</div>
                             </div>
-                        </li>
+                            <a class="dropdown-item py-2" href="{{ route('home') }}">
+                                <i class="fas fa-id-badge mr-2 text-muted"></i> Absensi Pengunjung
+                            </a>
+                            <div class="dropdown-divider my-1"></div>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item py-2 text-danger">
+                                    <i class="fas fa-right-from-bracket mr-2"></i> Keluar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-                    </ul>
+            <main class="desk-content">
+                @if (session('status'))
+                    <div class="desk-alert desk-alert-success" role="alert">
+                        <div>
+                            <i class="fas fa-circle-check mr-2"></i>{{ session('status') }}
+                        </div>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Tutup" style="font-size: 18px; line-height: 1;">&times;</button>
+                    </div>
+                @endif
 
-                </nav>
-                <!-- End of Topbar -->
-                <!-- Begin Page Content -->
-                {{-- @php $role = strtolower(Auth::user()->role->name) @endphp --}}
+                @if ($errors->any())
+                    <div class="desk-alert desk-alert-danger" role="alert">
+                        <div>
+                            <strong class="d-block mb-1"><i class="fas fa-circle-exclamation mr-2"></i>Periksa kembali input Anda:</strong>
+                            <ul class="mb-0 pl-3">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Tutup" style="font-size: 18px; line-height: 1;">&times;</button>
+                    </div>
+                @endif
+
                 @yield('content')
+            </main>
 
-            </div>
-            <!-- End of Main Content -->
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy;<script>
-                                document.write(new Date().getFullYear());
-
-                            </script> | Sistem Informasi Perpustakaan SMK Darul Khair Pulosari</span>
-                    </div>
-                </div>
+            <footer class="desk-footer">
+                <span>&copy; {{ date('Y') }} SIPerpustakaan &mdash; Sistem Informasi Perpustakaan Digital</span>
+                <span class="mono" style="font-size: 12px;">{{ now()->translatedFormat('d M Y') }}</span>
             </footer>
-            <!-- End of Footer -->
-
-        </div>
-        <!-- End of Content Wrapper -->
-
-    </div>
-    <!-- End of Page Wrapper -->
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fa fa-angle-up" style="font-size:20px"></i>
-    </a>
-
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-success" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Delete modal -->
-    <div class="modal fade" id="smallModal" tabindex="-1" role="dialog" aria-labelledby="smallModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="smallBody">
-                    <div>
-                        <!-- the result to be displayed apply here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="flash-data" data-text="{{ session()->get('text')  }}" data-title="{{ session()->get('title')  }}" data-icon="{{ session()->get('icon') }}"></div>
-
-    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-        @csrf
-    </form>
-
-    <form id="delete-form" action="" method="POST" class="d-none">
-        @csrf
-        @method('delete')
-    </form>
-
-    <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('assets/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('assets/bootstrap.bundle.min.js') }}"></script>
-
-    <!-- Page level plugins -->
     <script src="{{ asset('assets/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/dataTables.bootstrap4.min.js') }}"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/js/sb-admin-2.min.js"></script>
-
-    <!-- SweetAlert -->
     <script src="{{ asset('assets/sweetalert2.all.min.js') }}"></script>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('.datatable').DataTable({});
-        });
+    <script>
+        (function () {
+            const toggle = document.getElementById('deskMenuToggle');
+            const sidebar = document.getElementById('deskSidebar');
+            const backdrop = document.getElementById('deskBackdrop');
+            if (toggle && sidebar && backdrop) {
+                const closeDrawer = () => {
+                    sidebar.classList.remove('is-open');
+                    backdrop.classList.remove('is-open');
+                };
+                toggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('is-open');
+                    backdrop.classList.toggle('is-open');
+                });
+                backdrop.addEventListener('click', closeDrawer);
+            }
 
-        const textflashData = $('.flash-data').data('text');
-        const titleflashData = $('.flash-data').data('title');
-        const iconflashData = $('.flash-data').data('icon');
+            document.addEventListener('submit', function (e) {
+                const form = e.target.closest('.js-confirm-action');
+                if (!form || form.dataset.confirmed === '1') return;
+                e.preventDefault();
+                const title = form.dataset.title || 'Konfirmasi tindakan';
+                const text = form.dataset.text || 'Data yang dihapus tidak dapat dikembalikan.';
+                const confirmText = form.dataset.confirm || 'Ya, lanjutkan';
+                const confirmColor = form.dataset.danger === '0' ? '#15803D' : '#B91C1C';
 
-        if (textflashData && titleflashData && iconflashData) {
-            Swal.fire({
-                title: titleflashData
-                , text: textflashData
-                , icon: iconflashData
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: form.dataset.danger === '0' ? 'question' : 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: confirmColor,
+                    cancelButtonColor: '#66776F',
+                    confirmButtonText: confirmText,
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.dataset.confirmed = '1';
+                        form.submit();
+                    }
+                });
             });
-        }
-
-        
-        // display a modal (small modal)
-        $(document).on('click', '#smallButton', function(event) {
-            event.preventDefault();
-            let href = $(this).attr('data-attr');
-            $.ajax({
-                url: href
-                , beforeSend: function() {
-                    $('#loader').show();
-                },
-                // return the result
-                success: function(result) {
-                    $('#smallModal').modal("show");
-                    $('#smallBody').html(result).show();
-                }
-                , complete: function() {
-                    $('#loader').hide();
-                }
-                , error: function(jqXHR, testStatus, error) {
-                    console.log(error);
-                    alert("Page " + href + " cannot open. Error:" + error);
-                    $('#loader').hide();
-                }
-                , timeout: 8000
-            })
-        });
-   
+        })();
     </script>
- 
-
-    @stack('scripts')
+    @yield('script')
 </body>
 
 </html>

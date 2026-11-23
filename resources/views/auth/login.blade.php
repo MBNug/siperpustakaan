@@ -1,69 +1,96 @@
 @extends('layouts.auth')
 
-@section('title', 'Login')
+@section('title', 'Login Pustakawan — SIPerpustakaan')
 
 @section('content')
-<div class="container mt-5">
+    <div class="auth-box">
+        <div class="mb-4">
+            <div class="d-flex align-items-center d-lg-none mb-3" style="gap: 10px;">
+                <span class="desk-brand-mark" style="background: var(--bg-shell); color: #A7F3D0; border-color: var(--bg-shell);">
+                    <i class="fas fa-book-open"></i>
+                </span>
+                <span class="font-weight-bold" style="font-size: 16px;">SIPerpustakaan</span>
+            </div>
+            <h2 class="page-title" style="font-size: 22px;">Masuk Konsol Pustakawan</h2>
+            <p class="page-desc">Kelola katalog buku, anggota, dan transaksi peminjaman.</p>
+        </div>
 
-    <!-- Outer Row -->
-    <div class="row justify-content-center">
-
-        <div class="col-lg-5 mt-5">
-
-            <div class="card o-hidden border-0 shadow-lg my-5">
-                <div class="card-body p-0">
-                    <!-- Nested Row within Card Body -->
-                    <div class="row">
-                        <div class="col-lg col-sm col-md p-4">
-                            <div class="p-lg-4 p-4 p-md-4">
-                                <div class="text-center">
-                                    <h3 class="text-gray mb-4 nav-link"><strong><a href="{{ route('home') }}">Home</a></strong></h3>
-                                    <h1 class="h4 text-gray-900 mb-4">Masuk ke akun admin</h1>
-                                </div>
-
-                                @error('active')
-                                <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-
-                                <form class="user" method="post" action="{{ route('login') }}">
-                                    @csrf
-                                    <div class="form-group">
-                                        <input id="email" type="text" class="form-control form-control-user @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Email">
-
-                                        @error('email')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group">
-                                        <input id="password" type="password" class="form-control form-control-user @error('password') is-invalid @enderror" name="password" required placeholder="Password">
-
-                                        @error('password')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                    </div>
-                                    <button type="submit" class="btn btn-success btn-user btn-block">
-                                        Login
-                                    </button>
-                                </form>
-                                @if (config('app.demo_mode') && config('app.demo_login_password'))
-                                    <div class="alert alert-info mt-3 mb-0 small">
-                                        <div class="font-weight-bold mb-1">Akun Demo Admin</div>
-                                        <div>Email: <code>{{ config('app.demo_login_email') }}</code></div>
-                                        <div>Password: <code>{{ config('app.demo_login_password') }}</code></div>
-                                        <div class="text-muted mt-1">Database di-reset otomatis setiap hari pukul 03:00 WIB.</div>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
+        @if ($errors->any())
+            <div class="desk-alert desk-alert-danger mb-3" role="alert">
+                <div>
+                    <i class="fas fa-circle-exclamation mr-2"></i>{{ $errors->first() }}
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+        @endif
 
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+            <div class="desk-field">
+                <label for="email" class="desk-label">Email Pustakawan</label>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    class="desk-input @error('email') is-invalid @enderror"
+                    value="{{ old('email') }}"
+                    placeholder="admin@perpustakaan.test"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div class="desk-field">
+                <label for="password" class="desk-label">Kata Sandi</label>
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    class="desk-input @error('password') is-invalid @enderror"
+                    placeholder="••••••••"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="remember_me" name="remember">
+                    <label class="custom-control-label" for="remember_me" style="font-size: 13px; color: var(--text-secondary);">Ingat perangkat ini</label>
+                </div>
+                <a href="{{ route('home') }}" style="font-size: 13px; font-weight: 500;">Ke Halaman Absensi</a>
+            </div>
+
+            <button type="submit" class="btn-desk btn-desk-primary w-100" style="height: 44px; font-size: 14.5px;">
+                <i class="fas fa-right-to-bracket"></i>
+                <span>Masuk ke Konsol</span>
+            </button>
+        </form>
+
+        @if (config('app.demo_mode') && config('app.demo_login_password'))
+            <div class="mt-4 pt-3 border-top">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span style="font-size: 12.5px; font-weight: 600; color: var(--text-secondary);">Akun Demo Portofolio</span>
+                    <button type="button" class="btn-desk btn-desk-secondary btn-desk-sm" id="fillDemoBtn">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                        <span>Isi Otomatis</span>
+                    </button>
+                </div>
+                <div class="p-2 rounded" style="background: var(--bg-canvas); border: 1px solid var(--border-linen); font-size: 12.5px;">
+                    <div>Email: <span class="mono">{{ config('app.demo_login_email') }}</span></div>
+                    <div>Password: <span class="mono">{{ config('app.demo_login_password') }}</span></div>
+                </div>
+            </div>
+        @endif
+    </div>
+@endsection
+
+@section('script')
+    @if (config('app.demo_mode') && config('app.demo_login_password'))
+        <script>
+            document.getElementById('fillDemoBtn')?.addEventListener('click', function () {
+                document.getElementById('email').value = @json(config('app.demo_login_email'));
+                document.getElementById('password').value = @json(config('app.demo_login_password'));
+            });
+        </script>
+    @endif
 @endsection

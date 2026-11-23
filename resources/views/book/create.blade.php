@@ -1,116 +1,87 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah Buku')
+@section('title', 'Tambah Buku — SIPerpustakaan')
+@section('crumb', 'Katalog Buku / Tambah')
 
 @section('content')
-<div class="container">
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">@yield('title')</h1>
-        <a href="{{ route('book') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-chevron-left fa-sm text-white-50"></i> Kembali</a>
-    </div>
-    <div class="col-lg-12 p-0">
-        <small>
-            <ol class="breadcrumb">
-                <li><a href="{{ route('admin.dashboard') }}" class="text-decoration-none text-gray-800 mr-2"><i class="fa fa-tachometer-alt mr-1"></i> Home</a></li>
-                <li><a href="{{ route('book') }}" class="text-decoration-none text-gray-800 mr-2"><i class="fa fa-chevron-right fa-sm mr-2"></i>Buku</a></li>
-                <li class="active"><i class="fa fa-chevron-right fa-sm mr-2"></i>Tambah Buku</li>
-            </ol>
-        </small>
-    </div>
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <div class="container mt-3 mb-2">
-
-                <form action="{{ route('book.store') }}" method="post">
-                    @csrf
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Kode Buku*</label>
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control @error('kode') is-invalid @enderror" name="kode" placeholder="Kode Buku" value="{{ old('kode') }}">
-                            @error('kode')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Judul Buku*</label>
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control @error('judul') is-invalid @enderror" name="judul" placeholder="Judul Buku" value="{{ old('judul') }}">
-                            @error('judul')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Pengarang Buku*</label>
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control @error('pengarang') is-invalid @enderror" name="pengarang" placeholder="Pengarang Buku" value="{{ old('pengarang') }}">
-                            @error('pengarang')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Tahun Terbit*</label>
-                        <div class="col-lg-10">
-                            <input type="number" min="1900" class="form-control @error('terbit') is-invalid @enderror" name="terbit" placeholder="Tahun Terbit" value="{{ old('terbit') }}">
-                            @error('terbit')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Kategori*</label>
-                        <div class="col-lg-10">
-                            <select id="kategori" class="form-control custom-select @error('kategori') is-invalid @enderror"  name="kategori" placeholder="Kategori" value="{{ old('kategori') }}">
-                                <option selected disabled>Pilih Salah Satu</option>
-                                <option>Umum</option>
-                                <option>Filsafat dan Psikologi</option>
-                                <option>Agama</option>
-                                <option>Sosial</option>
-                                <option>Bahasa</option>
-                                <option>Sains dan Matematika</option>
-                                <option>Teknologi</option>
-                                <option>Seni dan Rekreasi</option>
-                                <option>Literatur dan Sastra</option>
-                                <option>Sejarah dan Geografi</option>
-                            </select>
-                            {{-- <input type="text" class="form-control @error('kategori') is-invalid @enderror" name="kategori" placeholder="Kategori" value="{{ old('kategori') }}"> --}}
-                            @error('kategori')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Jumlah*</label>
-                        <div class="col-lg-10">
-                            <input type="number" min="0" class="form-control @error('jumlah') is-invalid @enderror" name="jumlah" placeholder="Jumlah Buku" value="{{ old('jumlah') }}">
-                            @error('jumlah')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-success"><i class="fa fa-plus mr-2"></i> Tambah</button>
-                        <a href="{{ route('book') }}" id="back" class="btn btn-light"><i class="fa fa-times mr-2"></i> Batal</a>
-                    </div>
-                </form>
-
-            </div>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Tambah Buku Baru</h1>
+            <p class="page-desc">Daftarkan judul buku baru beserta jumlah eksemplar ke katalog perpustakaan.</p>
+        </div>
+        <div class="page-actions">
+            <a href="{{ route('book') }}" class="btn-desk btn-desk-secondary">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali ke Katalog</span>
+            </a>
         </div>
     </div>
-</div>
+
+    <section class="sheet desk-form-grid">
+        <div class="sheet-head">
+            <h2 class="sheet-title">Identitas &amp; Stok Buku</h2>
+        </div>
+        <div class="sheet-body">
+            <form action="{{ route('book.store') }}" method="POST">
+                @csrf
+                <div class="row">
+                    <div class="col-md-5 desk-field">
+                        <label for="kode" class="desk-label">Kode Buku<span class="req">*</span></label>
+                        <input id="kode" type="text" name="kode" class="desk-input mono @error('kode') is-invalid @enderror" placeholder="Mis. BK-001" value="{{ old('kode') }}" required>
+                        @error('kode')
+                            <div class="text-danger mt-1" style="font-size: 12.5px;">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-7 desk-field">
+                        <label for="kategori" class="desk-label">Kategori<span class="req">*</span></label>
+                        <input id="kategori" type="text" name="kategori" class="desk-input @error('kategori') is-invalid @enderror" placeholder="Mis. Fiksi, Referensi, Sains" value="{{ old('kategori') }}" required>
+                        @error('kategori')
+                            <div class="text-danger mt-1" style="font-size: 12.5px;">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="desk-field">
+                    <label for="judul" class="desk-label">Judul Buku<span class="req">*</span></label>
+                    <input id="judul" type="text" name="judul" class="desk-input @error('judul') is-invalid @enderror" placeholder="Judul lengkap buku" value="{{ old('judul') }}" required>
+                    @error('judul')
+                        <div class="text-danger mt-1" style="font-size: 12.5px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="desk-field">
+                    <label for="pengarang" class="desk-label">Pengarang<span class="req">*</span></label>
+                    <input id="pengarang" type="text" name="pengarang" class="desk-input @error('pengarang') is-invalid @enderror" placeholder="Nama penulis atau penyusun" value="{{ old('pengarang') }}" required>
+                    @error('pengarang')
+                        <div class="text-danger mt-1" style="font-size: 12.5px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 desk-field">
+                        <label for="terbit" class="desk-label">Tahun Terbit<span class="req">*</span></label>
+                        <input id="terbit" type="number" name="terbit" class="desk-input num @error('terbit') is-invalid @enderror" placeholder="Mis. 2024" value="{{ old('terbit') }}" required>
+                        @error('terbit')
+                            <div class="text-danger mt-1" style="font-size: 12.5px;">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6 desk-field">
+                        <label for="jumlah" class="desk-label">Jumlah Eksemplar<span class="req">*</span></label>
+                        <input id="jumlah" type="number" min="0" name="jumlah" class="desk-input num @error('jumlah') is-invalid @enderror" placeholder="Mis. 10" value="{{ old('jumlah') }}" required>
+                        @error('jumlah')
+                            <div class="text-danger mt-1" style="font-size: 12.5px;">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="pt-3 border-top d-flex flex-wrap" style="gap: 10px;">
+                    <button type="submit" class="btn-desk btn-desk-primary">
+                        <i class="fas fa-plus"></i>
+                        <span>Simpan Buku</span>
+                    </button>
+                    <a href="{{ route('book') }}" class="btn-desk btn-desk-secondary">Batal</a>
+                </div>
+            </form>
+        </div>
+    </section>
 @endsection

@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-23T12:25:00+07:00",
+  "title": "Design System: SIPerpustakaan",
+  "extensions": {
+    "colorMeta": {
+      "botanical-emerald": {
+        "role": "neutral",
+        "displayName": "Botanical Emerald",
+        "canonical": "#0f3d2e",
+        "tonalRamp": ["#051912", "#0a2c21", "#0f3d2e", "#165742", "#24765b", "#5aa68c", "#a7f3d0", "#ecfdf5"]
+      },
+      "circulation-emerald": {
+        "role": "primary",
+        "displayName": "Circulation Emerald",
+        "canonical": "#15803d",
+        "tonalRamp": ["#052e16", "#14532d", "#166534", "#15803d", "#22c55e", "#86efac", "#dcfce7", "#ecfdf3"]
+      },
+      "daylight-paper": {
+        "role": "neutral",
+        "displayName": "Daylight Paper",
+        "canonical": "#f7f8f6",
+        "tonalRamp": ["#2d332c", "#4d574c", "#768274", "#b2bcb0", "#e2e6e1", "#f0f3ef", "#f7f8f6", "#ffffff"]
+      },
+      "overdue-amber": {
+        "role": "secondary",
+        "displayName": "Overdue Amber",
+        "canonical": "#b45309",
+        "tonalRamp": ["#451a03", "#78350f", "#92400e", "#b45309", "#d97706", "#f59e0b", "#fde68a", "#fef3c7"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Page Title", "purpose": "Console headings and kiosk attendance prompt." },
+      "title": { "displayName": "Sheet Heading", "purpose": "Section headers inside desk sheets." },
+      "body": { "displayName": "Body Copy", "purpose": "Table rows, form labels, and descriptions." },
+      "mono": { "displayName": "Catalog & NIS", "purpose": "Book codes, NIS IDs, stock ratios, and dates." }
+    },
+    "shadows": [
+      { "name": "sheet-subtle", "value": "0 1px 2px rgba(20, 34, 28, 0.04), 0 4px 14px rgba(20, 34, 28, 0.03)", "purpose": "Default elevation for admin work sheets and stat tiles." },
+      { "name": "kiosk-desk", "value": "0 12px 36px rgba(15, 61, 46, 0.08)", "purpose": "Calm centered elevation for the public NIS attendance card." }
+    ],
+    "motion": [
+      { "name": "ease-desk", "value": "0.15s ease", "purpose": "Buttons, navigation links, and focus outline transitions." },
+      { "name": "meter-fill", "value": "0.25s ease", "purpose": "Width animation on Live Stock Ratio Meter track." }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "1080px" },
+      { "name": "drawer", "value": "991px" },
+      { "name": "mobile", "value": "640px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Circulation Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary emerald CTA for recording attendance, loans, returns, and saves.",
+      "html": "<button class=\"ds-btn-primary\">Catat Kehadiran Sekarang</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 38px; padding: 0 15px; border-radius: 6px; border: 1px solid transparent; background: #15803d; color: #ffffff; font-family: 'Onest', sans-serif; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: background-color 0.15s ease; } .ds-btn-primary:hover { background: #166534; } .ds-btn-primary:focus-visible { outline: 2px solid #15803d; outline-offset: 2px; }"
+    },
+    {
+      "name": "Live Stock Ratio Meter",
+      "kind": "custom",
+      "description": "Signature availability progress meter displaying Tersedia / Total copies per title.",
+      "html": "<div class=\"ds-stock-meter\"><div class=\"ds-stock-head\"><span class=\"ds-frac\">8 / 10</span><span class=\"ds-state\">Tersedia</span></div><div class=\"ds-track\"><div class=\"ds-fill\" style=\"width: 80%\"></div></div></div>",
+      "css": ".ds-stock-meter { display: flex; flex-direction: column; gap: 5px; min-width: 140px; font-family: 'Onest', sans-serif; } .ds-stock-head { display: flex; justify-content: space-between; font-size: 12.5px; } .ds-frac { font-weight: 600; color: #14221c; font-variant-numeric: tabular-nums; } .ds-state { font-size: 11.5px; color: #66776f; } .ds-track { width: 100%; height: 6px; border-radius: 999px; background: #e6eae5; overflow: hidden; } .ds-fill { height: 100%; border-radius: 999px; background: #15803d; }"
+    },
+    {
+      "name": "Overdue Circulation Badge",
+      "kind": "chip",
+      "description": "Warm amber warning pill flagging overdue or due-today loans.",
+      "html": "<span class=\"ds-pill-amber\">Telat 3 hari</span>",
+      "css": ".ds-pill-amber { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; background: #fef3c7; border: 1px solid #fde68a; color: #b45309; font-family: 'Onest', sans-serif; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Circulation Work Sheet",
+      "kind": "card",
+      "refersTo": "desk-sheet",
+      "description": "Crisp white container framed in 1px linen hairline on daylight paper ground.",
+      "html": "<div class=\"ds-sheet\"><div class=\"ds-sheet-head\">Katalog Koleksi Buku</div><div class=\"ds-sheet-body\">Daftar inventaris buku dengan status peminjaman real-time.</div></div>",
+      "css": ".ds-sheet { background: #ffffff; border: 1px solid #e2e6e1; border-radius: 14px; font-family: 'Onest', sans-serif; box-shadow: 0 1px 2px rgba(20, 34, 28, 0.04), 0 4px 14px rgba(20, 34, 28, 0.03); } .ds-sheet-head { padding: 16px 22px; border-bottom: 1px solid #e2e6e1; font-weight: 600; color: #14221c; } .ds-sheet-body { padding: 20px 22px; color: #43544b; font-size: 13.5px; }"
+    },
+    {
+      "name": "Kiosk NIS Input",
+      "kind": "input",
+      "description": "Large monospaced autocomplete field for student check-in at the library desk.",
+      "html": "<input class=\"ds-kiosk-input\" type=\"text\" placeholder=\"Ketik NIS anggota...\" value=\"20240101\" />",
+      "css": ".ds-kiosk-input { width: 100%; height: 48px; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #14221c; background: #ffffff; border: 1px solid #c9d1c7; border-radius: 6px; transition: border-color 0.15s ease, box-shadow 0.15s ease; } .ds-kiosk-input:focus { outline: none; border-color: #15803d; box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.14); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Library Circulation Desk",
+    "overview": "Library Circulation Desk pairs a quiet, inviting entrance kiosk (/) with an inventory-first librarian console (/admin/*). A deep botanical forest-emerald rail grounds operational tools on the left while daylight reading-room paper (#f7f8f6) keeps dense catalogs, member rosters, and active loans airy and scannable.",
+    "keyCharacteristics": [
+      "Dual-surface architecture: calm standalone NIS check-in card on / and 248px botanical-emerald console shell on /admin/*.",
+      "Live Stock Ratio Meter per book showing remaining copies (Tersedia / Total) with automatic threshold tinting (<= 2 amber, 0 crimson).",
+      "Persistent overdue row highlighting (#fffbeb) and single-click return confirmation via inline SweetAlert prompts.",
+      "Monospace tabular discipline (JetBrains Mono) for book codes, member NIS numbers, and due dates."
+    ],
+    "rules": [
+      {
+        "name": "The Overdue Spotlight Rule",
+        "body": "Unreturned loans past tanggalwajibkembali carry a persistent subtle warm-amber row background (#fffbeb) and pill badge (Telat X hari) so late items never blend into normal circulation history.",
+        "section": "colors"
+      },
+      {
+        "name": "The Linen-Edge Rule",
+        "body": "Admin tables, forms, and KPI tiles are separated by 1px solid #e2e6e1 edges on white sheets rather than heavy drop shadows or colored left border strips.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do highlight overdue active loans persistently with .is-overdue amber row tint and Telat X hari badges.",
+      "Do show the Live Stock Ratio Meter for catalog availability instead of plain integer counts alone."
+    ],
+    "donts": [
+      "Don't include real-world school names or legacy template strings; keep neutral SIPerpustakaan identity.",
+      "Don't route delete actions to standalone GET confirmation pages; confirm destructives inline via .js-confirm-action + DELETE POST forms."
+    ]
+  }
+}

@@ -90,10 +90,10 @@ class MemberController extends Controller
     public function update(Request $request, Member $member)
     {
         $validated = $request->validate([
-            'nis' => ['required', 'max:255', Rule::unique('members')->ignore($member->id)],
-            'nama' => 'required',
-            'alamat' => 'required',
-            'jmlkunjungan' => 'required',
+            'nis' => ['required', 'string', 'max:255', Rule::unique('members')->ignore($member->id)],
+            'nama' => 'required|string|max:255',
+            'alamat' => 'required|string',
+            'jmlkunjungan' => 'required|integer|min:0',
         ]);
 
         $member->update($validated);
@@ -114,19 +114,20 @@ class MemberController extends Controller
     }
     public function destroy($id){
         $member = Member::findOrFail($id);
+        $hasActiveBorrow = Borrow::where('nispeminjam', $member->nis)->whereNull('tanggalkembali')->exists();
+        if ($hasActiveBorrow) {
+            Fungsi::sweetalert('Anggota masih memiliki peminjaman buku yang belum dikembalikan.', 'error', 'Gagal!');
+            return redirect()->route('member');
+        }
         $member->delete();
-        Fungsi::sweetalert('Peminjaman berhasil dihapus', 'success', 'Berhasil!');
+        Fungsi::sweetalert('Anggota berhasil dihapus', 'success', 'Berhasil!');
         return redirect()->route('member');
     }
 
 
     public function lihatpinjaman($id){
         $member = Member::findOrFail($id);
-        $books = Book::all();
-        $borrows = Borrow::all();
-        $nis = $member->nis;
-        $borrow = $borrows->where('nispeminjam', '=', $nis);
-        // dd($borrow);
-        return view('member.lihatpinjaman', compact('borrow'));
+        $borrow = Borrow::with('book')->where('nispeminjam', '=', $member->nis)->latest('id')->get();
+        return view('member.lihatpinjaman', compact('borrow', 'member'));
     }
 }

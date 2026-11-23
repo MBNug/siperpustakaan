@@ -1,84 +1,72 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Anggota')
+@section('title', 'Edit Anggota — SIPerpustakaan')
+@section('crumb', 'Anggota / Edit')
 
 @section('content')
-<div class="container">
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">@yield('title')</h1>
-        <a href="{{ route('member') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-chevron-left fa-sm text-white-50"></i> Kembali</a>
-    </div>
-    <div class="col-lg-12 p-0">
-        <small>
-            <ol class="breadcrumb">
-                <li><a href="{{ route('admin.dashboard') }}" class="text-decoration-none text-gray-800 mr-2"><i class="fa fa-tachometer-alt mr-1"></i> Home</a></li>
-                <li><a href="{{ route('member') }}" class="text-decoration-none text-gray-800 mr-2"><i class="fa fa-chevron-right fa-sm mr-2"></i>Anggota</a></li>
-                <li class="active"><i class="fa fa-chevron-right fa-sm mr-2"></i>Edit Anggota</li>
-            </ol>
-        </small>
-    </div>
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <div class="container mt-3 mb-2">
-
-                <form action="{{ route('member.update', $member->id) }}" method="post">
-                    @csrf
-                    @method('patch')
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Nomor Induk Siswa*</label>
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control @error('nis') is-invalid @enderror" name="nis" placeholder="NIS" value="{{ old('nis', $member->nis) }}">
-                            @error('nis')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Nama*</label>
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror" name="nama" placeholder="Nama" value="{{ old('nama', $member->nama) }}">
-                            @error('nama')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Alamat*</label>
-                        <div class="col-lg-10">
-                            <input type="text" class="form-control @error('alamat') is-invalid @enderror" name="alamat" placeholder="Alamat" value="{{ old('alamat', $member->alamat) }}">
-                            @error('pengarang')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Jumlah Kunjungan*</label>
-                        <div class="col-lg-10">
-                            <input type="number" min="0" class="form-control @error('jmlkunjungan') is-invalid @enderror" name="jmlkunjungan" placeholder="Jumlah Kunjungan" value="{{ old('jmlkunjungan', $member->jmlkunjungan) }}">
-                            @error('jmlkunjungan')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-success"><i class="fa fa-save mr-2"></i> Simpan</button>
-                        <a href="{{ route('member') }}" id="back" class="btn btn-light"><i class="fa fa-times mr-2"></i> Batal</a>
-                    </div>
-                </form>
-
-            </div>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Edit Data Anggota</h1>
+            <p class="page-desc">Perbarui identitas dan catatan kunjungan untuk <span class="mono">{{ $member->nis }}</span>.</p>
+        </div>
+        <div class="page-actions">
+            <a href="{{ route('member') }}" class="btn-desk btn-desk-secondary">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali ke Daftar Anggota</span>
+            </a>
         </div>
     </div>
 
-</div>
+    <section class="sheet desk-form-grid">
+        <div class="sheet-head">
+            <h2 class="sheet-title">{{ $member->nama }}</h2>
+        </div>
+        <div class="sheet-body">
+            <form action="{{ route('member.update', $member->id) }}" method="POST">
+                @csrf
+                @method('patch')
+
+                <div class="desk-field">
+                    <label for="nis" class="desk-label">Nomor Induk Siswa (NIS)<span class="req">*</span></label>
+                    <input id="nis" type="text" name="nis" class="desk-input mono @error('nis') is-invalid @enderror" value="{{ old('nis', $member->nis) }}" required>
+                    @error('nis')
+                        <div class="text-danger mt-1" style="font-size: 12.5px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="desk-field">
+                    <label for="nama" class="desk-label">Nama Lengkap<span class="req">*</span></label>
+                    <input id="nama" type="text" name="nama" class="desk-input @error('nama') is-invalid @enderror" value="{{ old('nama', $member->nama) }}" required>
+                    @error('nama')
+                        <div class="text-danger mt-1" style="font-size: 12.5px;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8 desk-field">
+                        <label for="alamat" class="desk-label">Alamat / Kelas<span class="req">*</span></label>
+                        <input id="alamat" type="text" name="alamat" class="desk-input @error('alamat') is-invalid @enderror" value="{{ old('alamat', $member->alamat) }}" required>
+                        @error('alamat')
+                            <div class="text-danger mt-1" style="font-size: 12.5px;">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-4 desk-field">
+                        <label for="jmlkunjungan" class="desk-label">Jumlah Kunjungan<span class="req">*</span></label>
+                        <input id="jmlkunjungan" type="number" min="0" name="jmlkunjungan" class="desk-input num @error('jmlkunjungan') is-invalid @enderror" value="{{ old('jmlkunjungan', $member->jmlkunjungan) }}" required>
+                        @error('jmlkunjungan')
+                            <div class="text-danger mt-1" style="font-size: 12.5px;">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="pt-3 border-top d-flex flex-wrap" style="gap: 10px;">
+                    <button type="submit" class="btn-desk btn-desk-primary">
+                        <i class="fas fa-floppy-disk"></i>
+                        <span>Simpan Perubahan</span>
+                    </button>
+                    <a href="{{ route('member') }}" class="btn-desk btn-desk-secondary">Batal</a>
+                </div>
+            </form>
+        </div>
+    </section>
 @endsection

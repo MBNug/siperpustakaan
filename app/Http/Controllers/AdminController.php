@@ -16,41 +16,40 @@ class AdminController extends Controller
     {
         $books = Book::all();
         $members = Member::all();
-        $borrows = Borrow::all();
+        $borrows = Borrow::with(['book', 'member'])->get();
         $pengunjungs = Pengunjung::all();
         
-        if(Pengunjung::where('tanggal', '=', Carbon::today()->toDateString())->first() === null){
-            for($i=0; $i<7; $i++){
-                $a = (Pengunjung::where('tanggal', '=', Carbon::today()->startOfMonth()->addDays($i)->toDateString())
-                            ->first());
-                $b = $a===null;
-                if($b){
-                    $a = Pengunjung::create(['tanggal'=>Carbon::today()->startOfMonth()->addDays($i),'jmlpengunjung'=>0]);
-                }
-            }
-        }
+        $today = Carbon::today();
+        $pengunjungtoday = Pengunjung::firstOrCreate(
+            ['tanggal' => $today->toDateString()],
+            ['jmlpengunjung' => 0, 'jmlpinjam' => 0]
+        );
 
-        $pengunjungtoday = (Pengunjung::select('jmlpengunjung')
-            ->where('tanggal', '=', Carbon::today()->toDateString())
-            ->first());
+        $pengunjungthisweek = Pengunjung::whereBetween('tanggal', [$today->copy()->startOfWeek()->toDateString(), $today->copy()->endOfWeek()->toDateString()])
+            ->get();
 
-        
-        
-        $pengunjungthisweek = (Pengunjung::whereBetween('tanggal', [Carbon::today()->startOfWeek(), Carbon::today()->endOfWeek()])
-            ->get());
+        $jsonpengunjung = Pengunjung::select('jmlpengunjung as y', 'tanggal as x')
+            ->whereBetween('tanggal', [$today->copy()->startOfWeek()->toDateString(), $today->copy()->endOfWeek()->toDateString()])
+            ->orderBy('tanggal')
+            ->pluck('y', 'x')
+            ->values()
+            ->toArray();
 
-        $jsonpengunjung = (Pengunjung::select('jmlpengunjung as y', 'tanggal as x')
-        ->whereBetween('tanggal', [Carbon::today()->startofWeek(), Carbon::today()->endOfWeek()])
-        ->orderBy('tanggal')->pluck('y', 'x'))->values()->toArray();
+        $jsonpinjaman = Pengunjung::select('jmlpinjam as y', 'tanggal as x')
+            ->whereBetween('tanggal', [$today->copy()->startOfWeek()->toDateString(), $today->copy()->endOfWeek()->toDateString()])
+            ->orderBy('tanggal')
+            ->pluck('y', 'x')
+            ->values()
+            ->toArray();
 
-        $jsonpinjaman = (Pengunjung::select('jmlpinjam as y', 'tanggal as x')
-        ->whereBetween('tanggal', [Carbon::today()->startofWeek(), Carbon::today()->endOfWeek()])
-        ->orderBy('tanggal')->pluck('y', 'x'))->values()->toArray();
-        // dd($jsonpinjaman);
+        $activeBorrows = $borrows->whereNull('tanggalkembali');
+        $overdueBorrows = $activeBorrows->filter(function ($item) use ($today) {
+            return Carbon::parse($item->tanggalwajibkembali)->lt($today);
+        });
 
-        return view('admin.dashboard',[
+        return view('admin.dashboard', [
             'thisweekpengunjung' => $jsonpengunjung,
-            'thisweekpinjam' => $jsonpinjaman
-        ], compact('books', 'members', 'borrows', 'pengunjungs', 'pengunjungtoday','pengunjungthisweek', 'jsonpengunjung'));
+            'thisweekpinjam' => $jsonpinjaman,
+        ], compact('books', 'members', 'borrows', 'pengunjungs', 'pengunjungtoday', 'pengunjungthisweek', 'jsonpengunjung', 'activeBorrows', 'overdueBorrows'));
     }
 }

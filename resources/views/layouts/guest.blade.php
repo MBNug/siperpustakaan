@@ -1,60 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
     <meta charset="utf-8">
-    <title>@yield('title')</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'SIPerpustakaan — Absensi & Katalog')</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('css/circulation.css') }}">
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{{ route('home') }}">Sistem Informasi Perpustakaan</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<body class="kiosk-page">
+    <header class="kiosk-header">
+        <a href="{{ route('home') }}" class="d-flex align-items-center text-decoration-none" style="gap: 12px; color: var(--text-primary);">
+            <span class="desk-brand-mark" style="background: var(--bg-shell); color: #A7F3D0; border-color: var(--bg-shell);">
+                <i class="fas fa-book-open"></i>
+            </span>
+            <span>
+                <span class="d-block font-weight-bold" style="font-size: 16px; letter-spacing: -0.015em; line-height: 1.2;">SIPerpustakaan</span>
+                <span class="d-block" style="font-size: 12px; color: var(--text-muted);">Meja Sirkulasi &amp; Absensi Digital</span>
+            </span>
+        </a>
 
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            </ul>
-            @guest
-            <a class="btn btn-success" href="{{ route('login') }}">Login</a>
+        <div class="d-flex align-items-center" style="gap: 10px;">
+            @auth
+                <a href="{{ route('admin.dashboard') }}" class="btn-desk btn-desk-primary">
+                    <i class="fas fa-gauge-high"></i>
+                    <span>Buka Konsol Admin</span>
+                </a>
             @else
-            <a class="btn btn-light mr-2" href="{{ route('admin.dashboard') }}">Dashboard</a>
-            <a class="btn btn-danger" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-            @endguest
+                <a href="{{ route('login') }}" class="btn-desk btn-desk-secondary">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Login Pustakawan</span>
+                </a>
+            @endauth
         </div>
-    </nav>
-    @yield('content')
+    </header>
 
-    <div class="flash-data" data-text="{{ session()->get('text')  }}" data-title="{{ session()->get('title')  }}" data-icon="{{ session()->get('icon') }}"></div>
+    <main class="kiosk-main">
+        @yield('content')
+    </main>
 
-    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-        @csrf
-    </form>
-    <!-- SweetAlert -->
+    <footer class="desk-footer justify-content-center">
+        <span>&copy; {{ date('Y') }} SIPerpustakaan &mdash; Sistem Informasi Perpustakaan Digital</span>
+    </footer>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+    <script src="{{ asset('assets/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/sweetalert2.all.min.js') }}"></script>
-    <script>
-        const textflashData = $('.flash-data').data('text');
-        const titleflashData = $('.flash-data').data('title');
-        const iconflashData = $('.flash-data').data('icon');
-
-        if (textflashData && titleflashData && iconflashData) {
-            Swal.fire({
-                title: titleflashData
-                , text: textflashData
-                , icon: iconflashData
-            });
-        }
-
-    </script>
+    @yield('script')
 </body>
 
 </html>
