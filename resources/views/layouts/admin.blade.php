@@ -106,10 +106,19 @@
             </header>
 
             <main class="desk-content">
-                @if (session('status'))
+                @if (session('status') || session('success'))
                     <div class="desk-alert desk-alert-success" role="alert">
                         <div>
-                            <i class="fas fa-circle-check mr-2"></i>{{ session('status') }}
+                            <i class="fas fa-circle-check mr-2"></i>{{ session('status') ?? session('success') }}
+                        </div>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Tutup" style="font-size: 18px; line-height: 1;">&times;</button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="desk-alert desk-alert-danger" role="alert">
+                        <div>
+                            <i class="fas fa-triangle-exclamation mr-2"></i>{{ session('error') }}
                         </div>
                         <button type="button" class="close" data-dismiss="alert" aria-label="Tutup" style="font-size: 18px; line-height: 1;">&times;</button>
                     </div>

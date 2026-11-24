@@ -15,6 +15,14 @@
             <p class="page-desc">Kelola katalog buku, anggota, dan transaksi peminjaman.</p>
         </div>
 
+        @if (session('status'))
+            <div class="desk-alert desk-alert-success mb-3" role="alert">
+                <div>
+                    <i class="fas fa-circle-check mr-2"></i>{{ session('status') }}
+                </div>
+            </div>
+        @endif
+
         @if ($errors->any())
             <div class="desk-alert desk-alert-danger mb-3" role="alert">
                 <div>
