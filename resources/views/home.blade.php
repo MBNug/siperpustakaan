@@ -9,18 +9,16 @@
             <p class="page-desc">Masukkan atau pilih NIS Anda untuk mencatat kehadiran hari ini di meja sirkulasi.</p>
         </div>
 
-        @if (session('status'))
-            <div class="desk-alert desk-alert-success" role="alert">
-                <div>
-                    <i class="fas fa-circle-check mr-2"></i>{{ session('status') }}
-                </div>
-            </div>
-        @endif
-
-        @if (session('error'))
+        @if (session('error') || (session('text') && session('icon') === 'error'))
             <div class="desk-alert desk-alert-danger" role="alert">
                 <div>
-                    <i class="fas fa-triangle-exclamation mr-2"></i>{{ session('error') }}
+                    <i class="fas fa-triangle-exclamation mr-2"></i>{{ session('error') ?? session('text') }}
+                </div>
+            </div>
+        @elseif (session('status') || (session('text') && session('icon') === 'success'))
+            <div class="desk-alert desk-alert-success" role="alert">
+                <div>
+                    <i class="fas fa-circle-check mr-2"></i>{{ session('status') ?? session('text') }}
                 </div>
             </div>
         @endif

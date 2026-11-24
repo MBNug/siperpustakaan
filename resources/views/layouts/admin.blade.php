@@ -190,6 +190,7 @@
             });
         })();
     </script>
+    @include('partials.flash-swal')
     @yield('script')
 </body>
 

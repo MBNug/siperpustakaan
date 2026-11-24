@@ -53,6 +53,7 @@
     <script src="{{ asset('assets/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/sweetalert2.all.min.js') }}"></script>
+    @include('partials.flash-swal')
     @yield('script')
 </body>
 
